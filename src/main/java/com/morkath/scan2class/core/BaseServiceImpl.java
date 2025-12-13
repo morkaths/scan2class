@@ -12,8 +12,14 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class BaseServiceImpl<E, D, ID> implements BaseService<D, ID> {
+	
 	protected JpaRepository<E, ID> repository;
 	protected BaseMapper<E, D> mapper;
+	
+	public BaseServiceImpl(JpaRepository<E, ID> repository, BaseMapper<E, D> mapper) {
+		this.repository = repository;
+		this.mapper = mapper;
+	}
 
 	@Autowired
 	protected ObjectMapper objectMapper;
