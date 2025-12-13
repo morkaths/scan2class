@@ -1,0 +1,6 @@
+# Build
+/build/
+/target/
+
+# Project files
+src/main/resources/*.properties

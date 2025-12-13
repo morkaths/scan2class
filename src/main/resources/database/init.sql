@@ -1,0 +1,2 @@
+CREATE DATABASE IF NOT EXISTS scan2class;
+USE scan2class;
