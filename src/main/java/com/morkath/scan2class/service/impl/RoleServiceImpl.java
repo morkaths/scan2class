@@ -24,6 +24,11 @@ public class RoleServiceImpl implements RoleService {
 	public RoleEntity getById(Long id) {
 		return roleRepository.findById(id).orElse(null);
 	}
+	
+	@Override
+	public RoleEntity getByCode(String code) {
+		return roleRepository.findByCode(code);
+	}
 
 	@Override
 	public RoleEntity save(RoleEntity role) {

@@ -1,8 +1,5 @@
 package com.morkath.scan2class.constant.classroom;
 
 public enum ClassRole {
-    STUDENT,
-    TEACHER,
-    ASSISTANT,
-    OWNER
+	STUDENT, TEACHER, ASSISTANT, OWNER
 }

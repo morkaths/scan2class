@@ -1,13 +1,8 @@
 package com.morkath.scan2class.service;
 
-import java.util.List;
+import com.morkath.scan2class.core.BaseService;
+import com.morkath.scan2class.dto.PermissionDto;
 
-import com.morkath.scan2class.entity.auth.PermissionEntity;
-
-public interface PermissionService {
-	
-	List<PermissionEntity> getList();
-	PermissionEntity getById(Long id);
-	PermissionEntity save(PermissionEntity permission);
-	void delete(Long id);
+public interface PermissionService extends BaseService<PermissionDto, Long> {
+	PermissionDto findByCode(String code);
 }

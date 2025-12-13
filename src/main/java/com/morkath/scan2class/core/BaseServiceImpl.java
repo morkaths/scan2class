@@ -3,13 +3,10 @@ package com.morkath.scan2class.core;
 import java.util.List;
 import java.util.Map;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class BaseServiceImpl<E, D, ID> implements BaseService<D, ID> {
 	
@@ -21,23 +18,20 @@ public class BaseServiceImpl<E, D, ID> implements BaseService<D, ID> {
 		this.mapper = mapper;
 	}
 
-	@Autowired
-	protected ObjectMapper objectMapper;
-
 	@Override
-	public List<D> findAll() {
+	public List<D> getAll() {
 		List<E> entities = repository.findAll();
 		return entities.stream().map(mapper::toDto).toList();
 	}
 
 	@Override
-	public Page<D> findAll(Pageable pageable) {
+	public Page<D> getAll(Pageable pageable) {
 		Page<E> entityPage = repository.findAll(pageable);
 		return entityPage.map(mapper::toDto);
 	}
 
 	@Override
-	public D findById(ID id) {
+	public D getById(ID id) {
 		return repository.findById(id).map(mapper::toDto)
 				.orElseThrow(() -> new IllegalArgumentException("Entity not found with id: " + id));
 	}
@@ -56,7 +50,7 @@ public class BaseServiceImpl<E, D, ID> implements BaseService<D, ID> {
 	public D update(ID id, Map<String, Object> fields) {
 		E entity = repository.findById(id)
 				.orElseThrow(() -> new IllegalArgumentException("Entity not found with id: " + id));
-		mapper.partialUpdateEntity(objectMapper, fields, entity);
+		mapper.partial(fields, entity);
 		E saved = repository.save(entity);
 		return mapper.toDto(saved);
 	}

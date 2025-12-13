@@ -9,6 +9,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
+import com.morkath.scan2class.constant.auth.RoleCode;
+
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
@@ -20,7 +22,7 @@ public class SecurityConfig {
         http
             .authorizeRequests(requests -> requests
             		.antMatchers("/profile/**").authenticated()
-                    .antMatchers("/admin/**").hasAnyRole("ADMIN", "SUPERADMIN")
+                    .antMatchers("/admin/**").hasAnyRole(RoleCode.ADMIN.name(), RoleCode.MANAGER.name(), RoleCode.STAFF.name())
                     .anyRequest().permitAll())
             .formLogin(login -> login
                     .loginPage("/auth/login")
