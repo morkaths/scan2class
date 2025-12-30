@@ -25,6 +25,7 @@
 
                     <form:form modelAttribute="loginForm" action="${pageContext.request.contextPath}/auth/login"
                         method="post">
+                        <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
 
                         <form:errors path="username" cssClass="text-danger" />
                         <div class="form-group position-relative has-icon-left mb-4">

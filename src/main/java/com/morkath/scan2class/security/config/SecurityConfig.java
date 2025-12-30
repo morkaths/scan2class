@@ -21,9 +21,10 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
             .authorizeRequests(requests -> requests
-            		.antMatchers("/profile/**").authenticated()
+            		.antMatchers("/", "/auth/**", "/assets/**", "/static/**", "/resources/**", "/css/**", "/js/**").permitAll()
+            		.antMatchers("/profile/**", "/attend/**", "/classrooms/join/**").authenticated()
                     .antMatchers("/admin/**").hasAnyRole(RoleCode.ADMIN.name(), RoleCode.MANAGER.name(), RoleCode.STAFF.name())
-                    .anyRequest().permitAll())
+                    .anyRequest().authenticated())
             .formLogin(login -> login
                     .loginPage("/auth/login")
                     .usernameParameter("username")
@@ -31,8 +32,14 @@ public class SecurityConfig {
                     .defaultSuccessUrl("/", false)
                     .permitAll())
             .logout(logout -> logout
-                    .logoutUrl("/auth/logout")
-                    .permitAll())
+            	    .logoutUrl("/auth/logout")
+            	    .logoutSuccessUrl("/auth/login?logout")
+            	    .invalidateHttpSession(true)
+            	    .deleteCookies("JSESSIONID")
+            	    .clearAuthentication(true)
+            	    .permitAll())
+            .headers(headers -> headers
+            	    .cacheControl(cache -> {}))
             .sessionManagement(management -> management
                     .maximumSessions(1)
                     .maxSessionsPreventsLogin(false))

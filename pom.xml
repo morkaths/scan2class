@@ -253,6 +253,13 @@
             <version>${zxing.version}</version>
         </dependency>
         
+        <!-- ===== Java Time JSP Tags ===== -->
+        <dependency>
+		    <groupId>net.sargue</groupId>
+		    <artifactId>java-time-jsptags</artifactId>
+		    <version>1.1.4</version>
+		</dependency>
+        
         <!-- ===== Tools ===== -->
         <dependency>
             <groupId>org.projectlombok</groupId>

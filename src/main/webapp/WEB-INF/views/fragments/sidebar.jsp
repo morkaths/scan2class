@@ -49,14 +49,7 @@
                 <li class="sidebar-title">Menu</li>
 
                 <li class="sidebar-item">
-                    <a href="<c:url value='/' />" class='sidebar-link' data-path="/">
-                        <i class="bi bi-house-door-fill"></i>
-                        <span>Home</span>
-                    </a>
-                </li>
-
-                <li class="sidebar-item">
-                    <a href="<c:url value='/admin/dashboard' />" class='sidebar-link' data-path="/admin/dashboard">
+                    <a href="<c:url value='/admin/dashboard' />" class='sidebar-link' data-path="/admin">
                         <i class="bi bi-grid-fill"></i>
                         <span>Dashboard</span>
                     </a>
@@ -68,19 +61,25 @@
                         <span>Management</span>
                     </a>
                     <ul class="submenu">
-                        <li class="submenu-item">
-                            <a href="<c:url value='/admin/roles' />" class="submenu-link" data-path="/admin/roles">
-                                <i class="bi bi-box"></i> 
-                                Roles
-                            </a>
-                        </li>
-                        <li class="submenu-item">
-                            <a href="<c:url value='/admin/users' />" class="submenu-link" data-path="/admin/users">
-                                <i class="bi bi-person"></i>
-                                Users
-                            </a>
-                        </li>
-                    </ul>
+					    <li class="submenu-item">
+					        <a href="<c:url value='/admin/roles' />" class="submenu-link" data-path="/admin/roles">
+					            <i class="bi bi-person-badge"></i> 
+					            Roles
+					        </a>
+					    </li>
+					    <li class="submenu-item">
+					        <a href="<c:url value='/admin/users' />" class="submenu-link" data-path="/admin/users">
+					            <i class="bi bi-people"></i>
+					            Users
+					        </a>
+					    </li>
+					    <li class="submenu-item">
+					        <a href="<c:url value='/admin/classrooms' />" class="submenu-link" data-path="/admin/classrooms">
+					            <i class="bi bi-easel"></i>
+					            Classrooms
+					        </a>
+					    </li>
+					</ul>
                 </li>
 
                 <li class="sidebar-item">

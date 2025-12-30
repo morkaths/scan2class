@@ -91,17 +91,12 @@ public class AttendanceRecordEntity extends BaseEntity {
 			this.checkin = LocalDateTime.now();
 		LocalDateTime start = session.getStartTime();
 		LocalDateTime end = session.getEndTime();
-		LocalDateTime lateThreshold = start.plusMinutes(15);
 
-		if (this.checkin.isBefore(start)) {
-			this.status = "PRESENT";
-		} else if (this.checkin.isAfter(end)) {
-			this.status = "REJECTED";
-		} else if (this.checkin.isAfter(lateThreshold)) {
-			this.status = "LATE";
-		} else {
-			this.status = "PRESENT";
-		}
+		if (!this.checkin.isAfter(end) && !this.checkin.isBefore(start)) {
+	        this.status = "PRESENT";
+	    } else {
+	        this.status = "ABSENT";
+	    }
 	}
 	
 //	Getters and Setters

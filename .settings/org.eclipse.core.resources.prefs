@@ -1,8 +1,11 @@
 eclipse.preferences.version=1
 encoding//src/main/java=UTF-8
 encoding//src/main/resources=UTF-8
+encoding//src/main/webapp/WEB-INF/views/fragments/navbar.jsp=UTF-8
+encoding//src/main/webapp/WEB-INF/views/pages/admin/classroom/index.jsp=UTF-8
 encoding//src/main/webapp/WEB-INF/views/pages/admin/role/create.jsp=UTF-8
 encoding//src/main/webapp/WEB-INF/views/pages/admin/role/index.jsp=UTF-8
 encoding//src/main/webapp/WEB-INF/views/pages/admin/user/index.jsp=UTF-8
+encoding//src/main/webapp/WEB-INF/views/pages/home/index.jsp=UTF-8
 encoding//src/test/java=UTF-8
 encoding/<project>=UTF-8

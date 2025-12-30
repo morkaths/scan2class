@@ -1,552 +1,147 @@
-<header class="mb-5">
+<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
+
+<header class="fixed-top shadow-sm mb-5">
 	<div class="header-top">
 		<div class="container">
-			<div class="logo">
-				<jsp:include page="logo.jsp" />
-			</div>
+			<a class="navbar-brand fw-bold fs-3" href="<c:url value='/' />">
+			    <i class="bi bi-qr-code-scan me-2" style="font-size: 1.5rem; vertical-align: middle;"></i>
+			    <span>Scan2Class</span>
+			</a>
 			<div class="header-top-right">
-
 				<div class="dropdown">
-					<a href="#" id="topbarUserDropdown"
-						class="user-dropdown d-flex align-items-center dropend dropdown-toggle "
-						data-bs-toggle="dropdown" aria-expanded="false">
-						<div class="avatar avatar-md2">
-							<img src="./assets/compiled/jpg/1.jpg" alt="Avatar">
+					<sec:authorize access="isAuthenticated()">
+						<a href="#" data-bs-toggle="dropdown" aria-expanded="false">
+							<div class="user-menu d-flex">
+								<div class="user-name text-end me-3 d-none d-md-block">
+									<h6 class="mb-0 text-gray-600">
+										<sec:authentication property="principal.username" />
+									</h6>
+									<p class="mb-0 text-sm text-gray-600">
+										<sec:authentication property="principal.user.email" />
+									</p>
+								</div>
+								<div class="user-img d-flex align-items-center">
+									<div class="avatar avatar-md">
+										<img src="<c:url value='/assets/compiled/jpg/1.jpg' />">
+									</div>
+								</div>
+							</div>
+						</a>
+						<ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton" style="min-width: 11rem;">
+							<li>
+								<h6 class="dropdown-header">Hello,
+									<sec:authentication property="principal.username" />!
+								</h6>
+							</li>
+							<li>
+								<a class="dropdown-item" href="/profile">
+									<i class="icon-mid bi bi-person me-2"></i> 
+									Hồ sơ
+								</a>
+							</li>
+							<li>
+								<a class="dropdown-item" href="<c:url value='/classrooms' />">
+									<i class="icon-mid bi bi-gear me-2"></i>
+									Lớp học
+								</a>
+							</li>
+							<li>
+								<hr class="dropdown-divider">
+							</li>
+							<li>
+								<a class="dropdown-item" href="<c:url value='/auth/logout' />">
+									<i class="icon-mid bi bi-box-arrow-left me-2"></i> Đăng xuất
+								</a>
+							</li>
+						</ul>
+					</sec:authorize>
+					<sec:authorize access="!isAuthenticated()">
+						<div class="d-flex gap-2">
+							<a href="<c:url value='/auth/login' />" class="btn btn-primary">Đăng nhập</a>
+							<a href="<c:url value='/auth/register' />" class="d-none d-md-block btn btn-outline-primary">Đăng ký</a>
 						</div>
-						<div class="text">
-							<h6 class="user-dropdown-name">John Ducky</h6>
-							<p class="user-dropdown-status text-sm text-muted">Member</p>
-						</div>
-					</a>
-					<ul class="dropdown-menu dropdown-menu-end shadow-lg"
-						aria-labelledby="topbarUserDropdown">
-						<li><a class="dropdown-item" href="#">My Account</a></li>
-						<li><a class="dropdown-item" href="#">Settings</a></li>
-						<li>
-							<hr class="dropdown-divider">
-						</li>
-						<li><a class="dropdown-item" href="auth-login.html">Logout</a></li>
-					</ul>
+					</sec:authorize>
 				</div>
 
-				<!-- Burger button responsive -->
-				<a href="#" class="burger-btn d-block d-xl-none"> <i
-					class="bi bi-justify fs-3"></i>
+				<a href="#" class="burger-btn d-block d-xl-none"> 
+					<i class="bi bi-justify fs-3"></i>
 				</a>
 			</div>
 		</div>
 	</div>
-	<nav class="main-navbar">
+	<nav class="main-navbar" id="navbar_scroll">
 		<div class="container">
 			<ul>
-
-
-
-				<li class="menu-item  "><a href="index.html" class='menu-link'>
-						<span><i class="bi bi-grid-fill"></i> Dashboard</span>
-				</a></li>
-
-
-
-				<li class="menu-item  has-sub"><a href="#" class='menu-link'>
-						<span><i class="bi bi-stack"></i> Components</span>
-				</a>
+				<li class="menu-item ">
+					<a href="<c:url value='/' />" class='menu-link'>
+						<span><i class="bi bi-grid-fill"></i> Trang chủ</span>
+					</a>
+				</li>
+				<li class="menu-item  has-sub">
+					<a href="#" class='menu-link'>
+						<span><i class="bi bi-stack"></i> Lớp học</span>
+					</a>
 					<div class="submenu ">
-						<!-- Wrap to submenu-group-wrapper if you want 3-level submenu. Otherwise remove it. -->
 						<div class="submenu-group-wrapper">
-
-
 							<ul class="submenu-group">
-
-								<li class="submenu-item  "><a href="component-alert.html"
-									class='submenu-link'>Alert</a></li>
-
-
-
-								<li class="submenu-item  "><a href="component-badge.html"
-									class='submenu-link'>Badge</a></li>
-
-
-
-								<li class="submenu-item  "><a
-									href="component-breadcrumb.html" class='submenu-link'>Breadcrumb</a>
-
-
+								<li class="submenu-item  ">
+									<a href="<c:url value='/classrooms/create' />" class='submenu-link'>Tạo lớp học</a>
 								</li>
-
-
-
-								<li class="submenu-item  "><a href="component-button.html"
-									class='submenu-link'>Button</a></li>
-
-
-
-								<li class="submenu-item  "><a href="component-card.html"
-									class='submenu-link'>Card</a></li>
-
-
-
-								<li class="submenu-item  "><a
-									href="component-carousel.html" class='submenu-link'>Carousel</a>
-
-
+								<li class="submenu-item  ">
+									<a href="<c:url value='/classrooms' />" class='submenu-link'>Danh sách lớp học</a>
 								</li>
-
-
-
-								<li class="submenu-item  "><a
-									href="component-collapse.html" class='submenu-link'>Collapse</a>
-
-
+								<li class="submenu-item  ">
+									<a href="/classrooms/statistic" class='submenu-link'>Thống kê lớp học</a>
 								</li>
-
-
-
-								<li class="submenu-item  "><a
-									href="component-dropdown.html" class='submenu-link'>Dropdown</a>
-
-
-								</li>
-
 							</ul>
-
-
-
-							<ul class="submenu-group">
-
-								<li class="submenu-item  "><a
-									href="component-list-group.html" class='submenu-link'>List
-										Group</a></li>
-
-
-
-								<li class="submenu-item  "><a href="component-modal.html"
-									class='submenu-link'>Modal</a></li>
-
-
-
-								<li class="submenu-item  "><a href="component-navs.html"
-									class='submenu-link'>Navs</a></li>
-
-
-
-								<li class="submenu-item  "><a
-									href="component-pagination.html" class='submenu-link'>Pagination</a>
-
-
-								</li>
-
-
-
-								<li class="submenu-item  "><a
-									href="component-progress.html" class='submenu-link'>Progress</a>
-
-
-								</li>
-
-
-
-								<li class="submenu-item  "><a href="component-spinner.html"
-									class='submenu-link'>Spinner</a></li>
-
-
-
-								<li class="submenu-item  "><a href="component-tooltip.html"
-									class='submenu-link'>Tooltip</a></li>
-
-
-
-								<li class="submenu-item  has-sub"><a href="#"
-									class='submenu-link'>Extra Components</a> <!-- 3 Level Submenu -->
-									<ul class="subsubmenu">
-
-										<li class="subsubmenu-item "><a
-											href="extra-component-avatar.html" class="subsubmenu-link">Avatar</a>
-										</li>
-
-										<li class="subsubmenu-item "><a
-											href="extra-component-comment.html" class="subsubmenu-link">Comment</a>
-										</li>
-
-										<li class="subsubmenu-item "><a
-											href="extra-component-sweetalert.html"
-											class="subsubmenu-link">Sweet Alert</a></li>
-
-										<li class="subsubmenu-item "><a
-											href="extra-component-toastify.html" class="subsubmenu-link">Toastify</a>
-										</li>
-
-										<li class="subsubmenu-item "><a
-											href="extra-component-rating.html" class="subsubmenu-link">Rating</a>
-										</li>
-
-										<li class="subsubmenu-item "><a
-											href="extra-component-divider.html" class="subsubmenu-link">Divider</a>
-										</li>
-
-									</ul></li>
-
-							</ul>
-
-
 						</div>
-					</div></li>
+					</div>
+				</li>
 
-
-
-				<li class="menu-item active has-sub"><a href="#"
-					class='menu-link'> <span><i class="bi bi-grid-1x2-fill"></i>
-							Layouts</span>
-				</a>
+				<li class="menu-item active has-sub">
+					<a href="#" class='menu-link'> 
+						<span><i class="bi bi-grid-1x2-fill"></i> Quản lý</span>
+					</a>
 					<div class="submenu ">
-						<!-- Wrap to submenu-group-wrapper if you want 3-level submenu. Otherwise remove it. -->
 						<div class="submenu-group-wrapper">
-
-
 							<ul class="submenu-group">
-
-								<li class="submenu-item  "><a href="layout-default.html"
-									class='submenu-link'>Default Layout</a></li>
-
-
-
-								<li class="submenu-item  "><a
-									href="layout-vertical-1-column.html" class='submenu-link'>1
-										Column</a></li>
-
-
-
-								<li class="submenu-item  "><a
-									href="layout-vertical-navbar.html" class='submenu-link'>Vertical
-										Navbar</a></li>
-
-
-
-								<li class="submenu-item  "><a href="layout-rtl.html"
-									class='submenu-link'>RTL Layout</a></li>
-
-
-
-								<li class="submenu-item active "><a
-									href="layout-horizontal.html" class='submenu-link'>Horizontal
-										Menu</a></li>
-
+								<li class="submenu-item  ">
+									<a href="/admin/classrooms"class='submenu-link'>
+										Quản lý lớp học
+									</a>
+								</li>
+								<li class="submenu-item  ">
+									<a href="admin/users"class='submenu-link'>
+										Quản lý người dùng
+									</a>
+								</li>
+								<li class="submenu-item  ">
+									<a href="admin/roles"class='submenu-link'>
+										Quản lý quyền
+									</a>
+								</li>
 							</ul>
-
-
 						</div>
-					</div></li>
-
-
-
-				<li class="menu-item  has-sub"><a href="#" class='menu-link'>
-						<span><i class="bi bi-file-earmark-medical-fill"></i> Forms</span>
-				</a>
-					<div class="submenu ">
-						<!-- Wrap to submenu-group-wrapper if you want 3-level submenu. Otherwise remove it. -->
-						<div class="submenu-group-wrapper">
-
-
-							<ul class="submenu-group">
-
-								<li class="submenu-item  has-sub"><a href="#"
-									class='submenu-link'>Form Elements</a> <!-- 3 Level Submenu -->
-									<ul class="subsubmenu">
-
-										<li class="subsubmenu-item "><a
-											href="form-element-input.html" class="subsubmenu-link">Input</a>
-										</li>
-
-										<li class="subsubmenu-item "><a
-											href="form-element-input-group.html" class="subsubmenu-link">Input
-												Group</a></li>
-
-										<li class="subsubmenu-item "><a
-											href="form-element-select.html" class="subsubmenu-link">Select</a>
-										</li>
-
-										<li class="subsubmenu-item "><a
-											href="form-element-radio.html" class="subsubmenu-link">Radio</a>
-										</li>
-
-										<li class="subsubmenu-item "><a
-											href="form-element-checkbox.html" class="subsubmenu-link">Checkbox</a>
-										</li>
-
-										<li class="subsubmenu-item "><a
-											href="form-element-textarea.html" class="subsubmenu-link">Textarea</a>
-										</li>
-
-									</ul></li>
-
-
-
-								<li class="submenu-item  "><a href="form-layout.html"
-									class='submenu-link'>Form Layout</a></li>
-
-
-
-								<li class="submenu-item  has-sub"><a href="#"
-									class='submenu-link'>Form Validation</a> <!-- 3 Level Submenu -->
-									<ul class="subsubmenu">
-
-										<li class="subsubmenu-item "><a
-											href="form-validation-parsley.html" class="subsubmenu-link">Parsley</a>
-										</li>
-
-									</ul></li>
-
-
-
-								<li class="submenu-item  has-sub"><a href="#"
-									class='submenu-link'>Form Editor</a> <!-- 3 Level Submenu -->
-									<ul class="subsubmenu">
-
-										<li class="subsubmenu-item "><a
-											href="form-editor-quill.html" class="subsubmenu-link">Quill</a>
-										</li>
-
-										<li class="subsubmenu-item "><a
-											href="form-editor-ckeditor.html" class="subsubmenu-link">CKEditor</a>
-										</li>
-
-										<li class="subsubmenu-item "><a
-											href="form-editor-summernote.html" class="subsubmenu-link">Summernote</a>
-										</li>
-
-										<li class="subsubmenu-item "><a
-											href="form-editor-tinymce.html" class="subsubmenu-link">TinyMCE</a>
-										</li>
-
-									</ul></li>
-
-							</ul>
-
-
-						</div>
-					</div></li>
-
-
-
-				<li class="menu-item  has-sub"><a href="#" class='menu-link'>
-						<span><i class="bi bi-table"></i> Table</span>
-				</a>
-					<div class="submenu ">
-						<!-- Wrap to submenu-group-wrapper if you want 3-level submenu. Otherwise remove it. -->
-						<div class="submenu-group-wrapper">
-
-
-							<ul class="submenu-group">
-
-								<li class="submenu-item  "><a href="table.html"
-									class='submenu-link'>Table</a></li>
-
-
-
-								<li class="submenu-item  "><a href="table-datatable.html"
-									class='submenu-link'>Datatable</a></li>
-
-
-
-								<li class="submenu-item  "><a
-									href="table-datatable-jquery.html" class='submenu-link'>Datatable
-										(jQuery)</a></li>
-
-							</ul>
-
-
-						</div>
-					</div></li>
-
-
-
-				<li class="menu-item  has-sub"><a href="#" class='menu-link'>
-						<span><i class="bi bi-plus-square-fill"></i> Extras</span>
-				</a>
-					<div class="submenu ">
-						<!-- Wrap to submenu-group-wrapper if you want 3-level submenu. Otherwise remove it. -->
-						<div class="submenu-group-wrapper">
-
-
-							<ul class="submenu-group">
-
-								<li class="submenu-item  has-sub"><a href="#"
-									class='submenu-link'>Widgets</a> <!-- 3 Level Submenu -->
-									<ul class="subsubmenu">
-
-										<li class="subsubmenu-item "><a
-											href="ui-widgets-chatbox.html" class="subsubmenu-link">Chatbox</a>
-										</li>
-
-										<li class="subsubmenu-item "><a
-											href="ui-widgets-pricing.html" class="subsubmenu-link">Pricing</a>
-										</li>
-
-										<li class="subsubmenu-item "><a
-											href="ui-widgets-todolist.html" class="subsubmenu-link">To-do
-												List</a></li>
-
-									</ul></li>
-
-
-
-								<li class="submenu-item  has-sub"><a href="#"
-									class='submenu-link'>Icons</a> <!-- 3 Level Submenu -->
-									<ul class="subsubmenu">
-
-										<li class="subsubmenu-item "><a
-											href="ui-icons-bootstrap-icons.html" class="subsubmenu-link">Bootstrap
-												Icons </a></li>
-
-										<li class="subsubmenu-item "><a
-											href="ui-icons-fontawesome.html" class="subsubmenu-link">Fontawesome</a>
-										</li>
-
-										<li class="subsubmenu-item "><a
-											href="ui-icons-dripicons.html" class="subsubmenu-link">Dripicons</a>
-										</li>
-
-									</ul></li>
-
-
-
-								<li class="submenu-item  has-sub"><a href="#"
-									class='submenu-link'>Charts</a> <!-- 3 Level Submenu -->
-									<ul class="subsubmenu">
-
-										<li class="subsubmenu-item "><a
-											href="ui-chart-chartjs.html" class="subsubmenu-link">ChartJS</a>
-										</li>
-
-										<li class="subsubmenu-item "><a
-											href="ui-chart-apexcharts.html" class="subsubmenu-link">Apexcharts</a>
-										</li>
-
-									</ul></li>
-
-							</ul>
-
-
-						</div>
-					</div></li>
-
-
-
-				<li class="menu-item  has-sub"><a href="#" class='menu-link'>
-						<span><i class="bi bi-file-earmark-fill"></i> Pages</span>
-				</a>
-					<div class="submenu ">
-						<!-- Wrap to submenu-group-wrapper if you want 3-level submenu. Otherwise remove it. -->
-						<div class="submenu-group-wrapper">
-
-
-							<ul class="submenu-group">
-
-								<li class="submenu-item  has-sub"><a href="#"
-									class='submenu-link'>Authentication</a> <!-- 3 Level Submenu -->
-									<ul class="subsubmenu">
-
-										<li class="subsubmenu-item "><a href="auth-login.html"
-											class="subsubmenu-link">Login</a></li>
-
-										<li class="subsubmenu-item "><a href="auth-register.html"
-											class="subsubmenu-link">Register</a></li>
-
-										<li class="subsubmenu-item "><a
-											href="auth-forgot-password.html" class="subsubmenu-link">Forgot
-												Password</a></li>
-
-									</ul></li>
-
-
-
-								<li class="submenu-item  has-sub"><a href="#"
-									class='submenu-link'>Errors</a> <!-- 3 Level Submenu -->
-									<ul class="subsubmenu">
-
-										<li class="subsubmenu-item "><a href="error-403.html"
-											class="subsubmenu-link">403</a></li>
-
-										<li class="subsubmenu-item "><a href="error-404.html"
-											class="subsubmenu-link">404</a></li>
-
-										<li class="subsubmenu-item "><a href="error-500.html"
-											class="subsubmenu-link">500</a></li>
-
-									</ul></li>
-
-
-
-								<li class="submenu-item  "><a href="ui-file-uploader.html"
-									class='submenu-link'>File Uploader</a></li>
-
-
-
-								<li class="submenu-item  has-sub"><a href="#"
-									class='submenu-link'>Maps</a> <!-- 3 Level Submenu -->
-									<ul class="subsubmenu">
-
-										<li class="subsubmenu-item "><a
-											href="ui-map-google-map.html" class="subsubmenu-link">Google
-												Map</a></li>
-
-										<li class="subsubmenu-item "><a
-											href="ui-map-jsvectormap.html" class="subsubmenu-link">JS
-												Vector Map</a></li>
-
-									</ul></li>
-
-
-
-								<li class="submenu-item  "><a href="application-email.html"
-									class='submenu-link'>Email Application</a></li>
-
-
-
-								<li class="submenu-item  "><a href="application-chat.html"
-									class='submenu-link'>Chat Application</a></li>
-
-
-
-								<li class="submenu-item  "><a
-									href="application-gallery.html" class='submenu-link'>Photo
-										Gallery</a></li>
-
-
-
-								<li class="submenu-item  "><a
-									href="application-checkout.html" class='submenu-link'>Checkout
-										Page</a></li>
-
-							</ul>
-
-
-						</div>
-					</div></li>
-
-
+					</div>
+				</li>
 
 				<li class="menu-item  has-sub">
 					<a href="#" class='menu-link'>
-						<span><i class="bi bi-life-preserver"></i> Support</span>
+						<span><i class="bi bi-life-preserver"></i> Hỗ trợ</span>
 					</a>
 					<div class="submenu ">
-						<!-- Wrap to submenu-group-wrapper if you want 3-level submenu. Otherwise remove it. -->
 						<div class="submenu-group-wrapper">
 							<ul class="submenu-group">
-
-								<li class="submenu-item  "><a
-									href="https://zuramai.github.io/mazer/docs"
-									class='submenu-link'>Documentation</a></li>
-
-								<li class="submenu-item  "><a
-									href="https://github.com/zuramai/mazer/blob/main/CONTRIBUTING.md"
-									class='submenu-link'>Contribute</a></li>
-
-								<li class="submenu-item  "><a
-									href="https://github.com/zuramai/mazer#donation"
-									class='submenu-link'>Donate</a></li>
-
+								<li class="submenu-item  ">
+									<a href="/contact"
+										class='submenu-link'>Liên hệ</a>
+								</li>
+								<li class="submenu-item  ">
+									<a href="/community"
+										class='submenu-link'>Cộng đồng</a>
+								</li>
 							</ul>
 						</div>
 					</div>

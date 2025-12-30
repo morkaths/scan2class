@@ -2,8 +2,10 @@ package com.morkath.scan2class.entity.attendance;
 
 import java.time.LocalDateTime;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import javax.persistence.*;
 
@@ -68,8 +70,8 @@ public class SessionEntity extends BaseEntity {
 		this.active = false;
 	}
 
-	public SessionEntity(String name, ClassroomEntity classroom, LocalDateTime startTime, LocalDateTime endTime, boolean active,
-			String token, LocalDateTime tokenExpiry, Double latitude, Double longitude, Double radius) {
+	public SessionEntity(String name, ClassroomEntity classroom, LocalDateTime startTime, LocalDateTime endTime,
+			boolean active, String token, LocalDateTime tokenExpiry, Double latitude, Double longitude, Double radius) {
 		super();
 		this.name = name;
 		this.classroom = classroom;
@@ -83,8 +85,8 @@ public class SessionEntity extends BaseEntity {
 		this.radius = radius;
 	}
 
-//	 Business Methods
-	
+	// Business Methods
+
 	public boolean isTokenValid() {
 		if (this.tokenExpiry == null) {
 			return false;
@@ -93,7 +95,7 @@ public class SessionEntity extends BaseEntity {
 	}
 
 	public double calculateDistance(Double userLat, Double userLong) {
-		return GeoUtils.haversine(this.latitude, this.longitude, userLat, userLong);
+		return GeoUtils.calculateDistance(this.latitude, this.longitude, userLat, userLong);
 	}
 
 	public boolean isWithinRadius(Double userLat, Double userLong) {
@@ -101,8 +103,18 @@ public class SessionEntity extends BaseEntity {
 		return distance <= this.radius;
 	}
 	
-//	Helper Methods
-	
+	/**
+	 * Lấy bản đồ ánh xạ giữa User ID và AttendanceRecordEntity.
+	 * @return Map<User ID, AttendanceRecordEntity>
+	 */
+	@Transient
+	public Map<Long, AttendanceRecordEntity> getAttendanceMap() {
+		return records.stream().collect(Collectors.toMap(record -> record.getUser().getId(), record -> record,
+				(existing, replacement) -> existing));
+	}
+
+	// Helper Methods
+
 	public void addRecord(AttendanceRecordEntity record) {
 		this.records.add(record);
 		record.setSession(this);
@@ -113,7 +125,21 @@ public class SessionEntity extends BaseEntity {
 		record.setSession(null);
 	}
 
-// Getters and Setters
+	/**
+	 * Trả về TRUE nếu phiên đang mở (thời gian hiện tại chưa vượt quá EndTime).
+	 * 
+	 * @Transient: Báo cho Hibernate biết đây không phải cột trong DB.
+	 */
+	@Transient
+	public boolean getIsOpen() {
+		if (!this.active)
+			return false;
+		if (this.endTime == null)
+			return true;
+		return LocalDateTime.now().isBefore(this.endTime);
+	}
+
+	// Getters and Setters
 
 	public String getName() {
 		return name;

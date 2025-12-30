@@ -11,8 +11,8 @@ public class HomeController extends BaseController {
 
 	@GetMapping("/")
 	public String home(Model model) {
-		preparePage(model, "pages/admin/dashboard", "Dashboard");
-		return "layouts/vertical";
+		preparePage(model, "pages/home/index", "Home");
+		return "layouts/horizontal";
 	}
 
 }

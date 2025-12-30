@@ -4,9 +4,9 @@
 <header>
 	<nav class="navbar navbar-expand navbar-light navbar-top">
 		<div class="container-fluid">
-			<a href="#" class="burger-btn d-block">
-				<i class="bi bi-justify fs-3"></i>
-			</a>
+			<a class="navbar-brand fw-bold" href="<c:url value='/' />">
+                <i class="bi bi-qr-code-scan me-2"></i>Scan2Class
+            </a>
 
 			<button class="navbar-toggler" type="button" data-bs-toggle="collapse"
 				data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
