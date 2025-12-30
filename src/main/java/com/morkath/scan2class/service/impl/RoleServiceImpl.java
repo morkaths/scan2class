@@ -1,43 +1,24 @@
 package com.morkath.scan2class.service.impl;
 
-import java.util.List;
-
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.morkath.scan2class.core.BaseServiceImpl;
 import com.morkath.scan2class.entity.auth.RoleEntity;
 import com.morkath.scan2class.repository.auth.RoleRepository;
 import com.morkath.scan2class.service.RoleService;
 
 @Service
-public class RoleServiceImpl implements RoleService {
+public class RoleServiceImpl extends BaseServiceImpl<RoleEntity, Long> implements RoleService {
+	private final RoleRepository roleRepository;
 	
-	@Autowired
-	private RoleRepository roleRepository;
-
-	@Override
-	public List<RoleEntity> getList() {
-		return roleRepository.findAll();
+	public RoleServiceImpl(RoleRepository roleRepository) {
+		super(roleRepository);
+		this.roleRepository = roleRepository;
 	}
 
-	@Override
-	public RoleEntity getById(Long id) {
-		return roleRepository.findById(id).orElse(null);
-	}
-	
 	@Override
 	public RoleEntity getByCode(String code) {
 		return roleRepository.findByCode(code);
-	}
-
-	@Override
-	public RoleEntity save(RoleEntity role) {
-		return roleRepository.save(role);
-	}
-
-	@Override
-	public void delete(Long id) {
-		roleRepository.deleteById(id);		
 	}
 
 }

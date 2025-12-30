@@ -51,14 +51,7 @@
                 <li class="sidebar-item">
                     <a href="<c:url value='/' />" class='sidebar-link' data-path="/">
                         <i class="bi bi-house-door-fill"></i>
-                        <span>Trang chủ</span>
-                    </a>
-                </li>
-
-                <li class="sidebar-item">
-                    <a href="<c:url value='/categories' />" class='sidebar-link' data-path="/categories">
-                        <i class="bi bi-tags-fill"></i>
-                        <span>Danh mục</span>
+                        <span>Home</span>
                     </a>
                 </li>
 
@@ -72,31 +65,19 @@
                 <li class="sidebar-item has-sub">
                     <a href="#" class='sidebar-link' data-path="/admin">
                         <i class="bi bi-tools"></i>
-                        <span>Quản lý</span>
+                        <span>Management</span>
                     </a>
                     <ul class="submenu">
                         <li class="submenu-item">
-                            <a href="<c:url value='/admin/categories' />" class="submenu-link" data-path="/admin/categories">
-                                <i class="bi bi-tag"></i> 
-                                Danh mục
-                            </a>
-                        </li>
-                        <li class="submenu-item">
-                            <a href="<c:url value='/admin/products' />" class="submenu-link" data-path="/admin/products">
+                            <a href="<c:url value='/admin/roles' />" class="submenu-link" data-path="/admin/roles">
                                 <i class="bi bi-box"></i> 
-                                Sản phẩm
-                            </a>
-                        </li>
-                        <li class="submenu-item">
-                            <a href="<c:url value='/admin/languages' />" class="submenu-link" data-path="/admin/languages">
-                                <i class="bi bi-translate"></i> 
-                                Ngôn ngữ
+                                Roles
                             </a>
                         </li>
                         <li class="submenu-item">
                             <a href="<c:url value='/admin/users' />" class="submenu-link" data-path="/admin/users">
                                 <i class="bi bi-person"></i>
-                                Người dùng
+                                Users
                             </a>
                         </li>
                     </ul>
@@ -105,28 +86,21 @@
                 <li class="sidebar-item">
                     <a href="<c:url value='/profile' />" class='sidebar-link' data-path="/profile">
                         <i class="bi bi-person-circle"></i>
-                        <span>Tài khoản</span>
+                        <span>Profile</span>
                     </a>
                 </li>
 
                 <li class="sidebar-item">
                     <a href="<c:url value='/support' />" class='sidebar-link' data-path="/support">
                         <i class="bi bi-question-circle"></i>
-                        <span>Hỗ trợ</span>
-                    </a>
-                </li>
-
-                <li class="sidebar-item">
-                    <a href="<c:url value='/contact' />" class='sidebar-link' data-path="/contact">
-                        <i class="bi bi-envelope"></i>
-                        <span>Liên hệ</span>
+                        <span>Support</span>
                     </a>
                 </li>
 
                 <li class="sidebar-item">
                     <a href="<c:url value='/logout' />" class='sidebar-link' data-path="/logout">
                         <i class="bi bi-box-arrow-right"></i>
-                        <span>Đăng xuất</span>
+                        <span>Logout</span>
                     </a>
                 </li>
             </ul>

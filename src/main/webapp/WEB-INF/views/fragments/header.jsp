@@ -17,40 +17,40 @@
 			<div class="collapse navbar-collapse" id="navbarSupportedContent">
 				<ul class="navbar-nav ms-auto mb-lg-0">
 					<li class="nav-item dropdown me-1">
-							<a class="nav-link dropdown-toggle text-gray-600" href="#" id="langDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-									<c:choose>
-											<c:when test="${sessionScope.lang == 'vi'}">
-													<span class="fi fi-vn fs-4"></span>
-											</c:when>
-											<c:when test="${sessionScope.lang == 'en'}">
-													<span class="fi fi-gb fs-4"></span>
-											</c:when>
-											<c:when test="${sessionScope.lang == 'ja'}">
-													<span class="fi fi-jp fs-4"></span>
-											</c:when>
-											<c:otherwise>
-													<i class="bi bi-translate fs-4"></i>
-											</c:otherwise>
-									</c:choose>
-									Ngôn ngữ
-							</a>
-							<ul class="dropdown-menu dropdown-menu-end" aria-labelledby="langDropdown">
-									<li>
-											<a class="dropdown-item" href="<c:url value='/?lang=vi' />">
-													<span class="fi fi-vn me-2"></span> Tiếng Việt
-											</a>
-									</li>
-									<li>
-											<a class="dropdown-item" href="<c:url value='/?lang=en' />">
-													<span class="fi fi-gb me-2"></span> English
-											</a>
-									</li>
-									<li>
-											<a class="dropdown-item" href="<c:url value='/?lang=ja' />">
-													<span class="fi fi-jp me-2"></span> 日本語
-											</a>
-									</li>
-							</ul>
+						<a class="nav-link dropdown-toggle text-gray-600" href="#" id="langDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+							<c:choose>
+								<c:when test="${sessionScope.lang == 'vi'}">
+										<span class="fi fi-vn fs-4"></span>
+								</c:when>
+								<c:when test="${sessionScope.lang == 'en'}">
+										<span class="fi fi-gb fs-4"></span>
+								</c:when>
+								<c:when test="${sessionScope.lang == 'ja'}">
+										<span class="fi fi-jp fs-4"></span>
+								</c:when>
+								<c:otherwise>
+										<i class="bi bi-translate fs-4"></i>
+								</c:otherwise>
+							</c:choose>
+							Ngôn ngữ
+						</a>
+						<ul class="dropdown-menu dropdown-menu-end" aria-labelledby="langDropdown">
+							<li>
+								<a class="dropdown-item" href="<c:url value='/?lang=vi' />">
+									<span class="fi fi-vn me-2"></span> Tiếng Việt
+								</a>
+							</li>
+							<li>
+								<a class="dropdown-item" href="<c:url value='/?lang=en' />">
+									<span class="fi fi-gb me-2"></span> English
+								</a>
+							</li>
+							<li>
+								<a class="dropdown-item" href="<c:url value='/?lang=ja' />">
+									<span class="fi fi-jp me-2"></span> 日本語
+								</a>
+							</li>
+						</ul>
 					</li>
 					<li class="nav-item dropdown me-3">
 						<a class="nav-link active dropdown-toggle text-gray-600" href="#" data-bs-toggle="dropdown"
@@ -122,8 +122,6 @@
 									Profile</a></li>
 							<li><a class="dropdown-item" href="#"><i class="icon-mid bi bi-gear me-2"></i>
 									Settings</a></li>
-							<li><a class="dropdown-item" href="#"><i class="icon-mid bi bi-wallet me-2"></i>
-									Wallet</a></li>
 							<li>
 								<hr class="dropdown-divider">
 							</li>

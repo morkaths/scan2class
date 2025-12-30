@@ -47,6 +47,10 @@ public class RoleEntity extends BaseEntity {
 	
 //	Setters and Getters
 
+	public Set<UserEntity> getUsers() {
+		return users;
+	}
+
 	public String getCode() {
 		return code;
 	}
@@ -69,10 +73,6 @@ public class RoleEntity extends BaseEntity {
 
 	public void setPermissions(Set<PermissionEntity> permissions) {
 		this.permissions = permissions;
-	}
-
-	public Set<UserEntity> getUsers() {
-		return users;
 	}
 
 	public void setUsers(Set<UserEntity> users) {

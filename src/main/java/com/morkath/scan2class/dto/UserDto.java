@@ -1,12 +1,13 @@
 package com.morkath.scan2class.dto;
 
+import java.util.List;
 import java.util.Set;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 
 public class UserDto {
-private Long id;
+private Long uid;
 	
 	@NotBlank(message = "Username is required")
 	private String username;
@@ -17,41 +18,47 @@ private Long id;
 	@NotBlank(message = "Email is required")
 	@Email(message = "Email should be valid")
 	private String email;
-
-	@NotBlank(message = "Status is required")
-	private int status;
+	
+	@NotBlank(message = "Fullname is required")
+	private String fullname;
+	
+	private int status = 1;
 
 	private Set<UserRoleDto> roles;
+	
+	private List<Long> roleIds;
 
 	public UserDto() {
 		super();
 	}
 
-	public UserDto(Long id, String username, String password, String email, int status) {
+	public UserDto(Long id, String username, String password, String email, String fullname, int status) {
 		super();
-		this.id = id;
+		this.uid = id;
 		this.username = username;
 		this.password = password;
 		this.email = email;
+		this.fullname = fullname;
 		this.status = status;
 	}
 
-	public UserDto(Long id, String username, String password, String email, int status, Set<UserRoleDto> roles) {
+	public UserDto(Long id, String username, String password, String email, String fullname, int status, Set<UserRoleDto> roles) {
 		super();
-		this.id = id;
+		this.uid = id;
 		this.username = username;
 		this.password = password;
 		this.email = email;
+		this.fullname = fullname;
 		this.status = status;
 		this.roles = roles;
 	}
 
 	public Long getId() {
-		return id;
+		return uid;
 	}
 
 	public void setId(Long id) {
-		this.id = id;
+		this.uid = id;
 	}
 
 	public String getUsername() {
@@ -77,6 +84,14 @@ private Long id;
 	public void setEmail(String email) {
 		this.email = email;
 	}
+	
+	public String getFullname() {
+		return fullname;
+	}
+	
+	public void setFullname(String fullname) {
+		this.fullname = fullname;
+	}
 
 	public int getStatus() {
 		return status;
@@ -92,5 +107,13 @@ private Long id;
 
 	public void setRoles(Set<UserRoleDto> roles) {
 		this.roles = roles;
+	}
+	
+	public List<Long> getRoleIds() {
+		return roleIds;
+	}
+	
+	public void setRoleIds(List<Long> roleIds) {
+		this.roleIds = roleIds;
 	}
 }

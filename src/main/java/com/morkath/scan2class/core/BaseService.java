@@ -10,6 +10,7 @@ public interface BaseService<T, ID> {
 	List<T> getAll();
 	Page<T> getAll(Pageable pageable);
 	T getById(ID id);
+	List<T> getByIds(List<ID> ids);
 	T save(T dto);
 	T update(ID id, Map<String, Object> fields);
 	boolean delete(ID id);

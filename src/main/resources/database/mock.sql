@@ -19,3 +19,15 @@ INSERT INTO roles_permissions (role_id, permission_id) VALUES
 (2, 1),                         -- User: view user permission
 (3, 1), (3, 3),                 -- Manager: view user, view role
 (4, 1);                         -- Staff: view user
+
+INSERT INTO roles (code, name) VALUES
+('GUEST', 'Guest/Public Access'),
+('SALES', 'Sales Representative'),
+('HR', 'Human Resources Specialist'),
+('ACCOUNTANT', 'Financial Accountant'),
+('EDITOR', 'Content Editor'),
+('AUDITOR', 'System Auditor'),
+('DEVELOPER', 'System Developer'),
+('SUPPORT', 'Technical Support Staff'),
+('SUPERVISOR', 'Team Supervisor'),
+('FINANCE', 'Finance Department');
