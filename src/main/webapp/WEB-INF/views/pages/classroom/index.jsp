@@ -5,18 +5,21 @@
 
 <div class="container py-5">
 	<div class="card shadow-sm border-0">
-		<div
-			class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
-			<div>
-				<h5 class="mb-0 fw-bold text-primary">
-					<i class="bi bi-mortarboard-fill me-2"></i>Quản lý Lớp học
-				</h5>
-				<small class="text-muted">Danh sách các lớp học của bạn</small>
-			</div>
-			<a href="<c:url value='/classrooms/create' />"
-				class="btn btn-primary"> <i class="bi bi-plus-lg me-1"></i>Thêm
-				lớp mới
-			</a>
+		<div class="card-header bg-white py-2 d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
+		    <div>
+		        <h5 class="mb-0 fw-bold text-primary align-items-center">
+		            <i class="bi bi-mortarboard-fill fs-4"></i>
+		            <span>Quản lý Lớp học</span>
+		        </h5>
+		        <small class="text-muted d-block mt-1">Danh sách các lớp học của bạn</small>
+		    </div>
+		
+		    <div class="d-grid d-md-block">
+		        <a href="<c:url value='/classrooms/create' />" class="btn btn-primary px-4 shadow-sm">
+		            <i class="bi bi-plus-lg me-1"></i>
+		            Thêm lớp mới
+		        </a>
+		    </div>
 		</div>
 		<div class="card-body p-0">
 			<c:choose>
@@ -29,14 +32,14 @@
 					</div>
 				</c:when>
 				<c:otherwise>
-					<div class="table-responsive">
-						<table class="table table-hover align-middle mb-0">
-							<thead class="bg-light">
+					<div class="table-responsive p-3">
+						<table id="table" class="table table-striped">
+							<thead>
 								<tr>
 									<th class="ps-4">Thông tin lớp</th>
 									<th>Phòng</th>
 									<th>Trạng thái</th>
-									<th class="text-end pe-4">Thao tác</th>
+									<th></th>
 								</tr>
 							</thead>
 							<tbody>
@@ -57,8 +60,8 @@
 												</div>
 										</a></td>
 										<td>
-											<div class="d-flex align-items-center text-secondary">
-												<i class="bi bi-geo-alt me-2"></i> <span>${classroom.room}</span>
+											<div class="align-items-center text-secondary">
+												<i class="bi bi-geo-alt"></i> <span>${classroom.room}</span>
 											</div>
 										</td>
 										<td><c:choose>
@@ -76,42 +79,44 @@
 												</c:otherwise>
 											</c:choose></td>
 										<td class="text-end pe-4">
-											<div class="btn-group" role="group">
-												<a href="<c:url value='/classrooms/${classroom.id}' />"
-													class="btn btn-primary btn-sm" title="Xem chi tiết">
-													<i class="bi bi-eye-fill me-1"></i>Chi tiết
-												</a>
-
-												<div class="btn-group" role="group">
-													<button id="btnGroupDrop1" type="button"
-														class="btn btn-outline-secondary btn-sm dropdown-toggle"
-														data-bs-toggle="dropdown" aria-expanded="false">
-														<i class="bi bi-three-dots-vertical"></i>
-													</button>
-													<ul class="dropdown-menu dropdown-menu-end"
-														aria-labelledby="btnGroupDrop1">
-														<li><a class="dropdown-item"
-															href="<c:url value='/classrooms/edit/${classroom.id}' />">
-																<i class="bi bi-pencil me-2"></i>Chỉnh sửa
-														</a></li>
-														<li>
-															<hr class="dropdown-divider">
-														</li>
-														<li>
-															<form
-																action="<c:url value='/classrooms/delete/${classroom.id}' />"
-																method="post" style="display: inline;">
-																<input type="hidden" name="${_csrf.parameterName}"
-																	value="${_csrf.token}" />
-																<button type="submit" class="dropdown-item text-danger"
-																	onclick="return confirm('Bạn có chắc muốn xóa lớp này?')">
-																	<i class="bi bi-trash me-2"></i>Xóa
-																</button>
-															</form>
-														</li>
-													</ul>
-												</div>
-											</div>
+										    <div class="dropdown" style="position: static;">
+										        <button class="btn btn-link text-dark p-0 shadow-none" 
+										                type="button" 
+										                data-bs-toggle="dropdown" 
+										                aria-expanded="false">
+										            <i class="bi bi-three-dots-vertical fs-5"></i>
+										        </button>
+										        
+										        <ul class="dropdown-menu dropdown-menu-end shadow border-0 animated-fade-in">
+										            <li>
+										                <a class="dropdown-item py-2" href="<c:url value='/classrooms/${classroom.id}' />">
+										                    <i class="bi bi-eye me-2 text-primary"></i>
+										                    Xem chi tiết
+										                </a>
+										            </li>
+										            <li>
+										                <a class="dropdown-item py-2" href="<c:url value='/classrooms/edit/${classroom.id}' />">
+										                    <i class="bi bi-pencil me-2 text-secondary"></i>
+										                    Chỉnh sửa
+										                </a>
+										            </li>
+										            <li>
+										                <hr class="dropdown-divider">
+										            </li>
+										            <li>
+										                <form action="<c:url value='/classrooms/delete/${classroom.id}' />" 
+										                      method="post" 
+										                      onsubmit="return confirm('Bạn có chắc chắn muốn xoá lớp học này? Mọi dữ liệu điểm danh liên quan sẽ bị mất vĩnh viễn.');"
+										                      id="delete-form-${classroom.id}">
+										                    <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
+										                    <button type="submit" class="dropdown-item py-2 text-danger">
+										                        <i class="bi bi-trash me-2"></i>
+										                        Xoá lớp học
+										                    </button>
+										                </form>
+										            </li>
+										        </ul>
+										    </div>
 										</td>
 									</tr>
 								</c:forEach>

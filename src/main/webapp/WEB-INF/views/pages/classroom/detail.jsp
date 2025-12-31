@@ -27,13 +27,14 @@
 					                    
 					                    <div class="w-100">
 					                        <div class="d-flex flex-wrap align-items-center mb-2">
+					                        	<span class="badge bg-primary me-1">${classroom.code}</span>
 					                            <h2 class="mb-0 fw-bold me-2 fs-4 fs-md-2">${classroom.name}</h2>
-					                            <span class="badge bg-primary">${classroom.code}</span>
+					                            <a href="<c:url value='/classrooms/edit/${classroom.id}' />">
+						                            <i class="bi bi-pencil"></i>
+						                        </a>
 					                        </div>
 					                        <div class="text-muted mb-2 small">
 					                            <i class="bi bi-geo-alt me-1"></i>Phòng: ${classroom.room}
-					                        </div>
-					                        <div>
 					                            <span class="badge ${classroom.status == 1 ? 'bg-success-subtle text-success' : 'bg-danger-subtle text-danger'} rounded-pill">
 					                                ${classroom.status == 1 ? 'Đang hoạt động' : 'Đã kết thúc'}
 					                            </span>
@@ -50,11 +51,6 @@
 					                           class="btn btn-primary w-100 w-sm-auto">
 					                            <i class="bi bi-plus-circle me-2"></i>Tạo phiên
 					                        </a>
-					
-					                        <a href="<c:url value='/classrooms/edit/${classroom.id}' />"
-					                           class="btn btn-outline-secondary w-100 w-sm-auto">
-					                            <i class="bi bi-pencil me-1"></i> Sửa
-					                        </a>
 					                    </div>
 					
 					                </div>
@@ -65,7 +61,7 @@
 
                         <div class="col-12">
                             <div class="card shadow-sm border-0">
-                                <div class="card-header bg-white border-bottom-0 pt-4 px-4">
+                                <div class="card-header border-bottom-0 pt-4 px-4">
                                     <ul class="nav nav-tabs card-header-tabs" role="tablist">
                                         <li class="nav-item">
                                             <button class="nav-link active fw-bold" data-bs-toggle="tab"
@@ -150,7 +146,6 @@
                                                                                             Chi tiết
                                                                                         </a>
                                                                                     </li>
-
                                                                                     <li>
                                                                                         <a class="dropdown-item py-2"
                                                                                             href="<c:url value='/classrooms/${classroom.id}/sessions/${session.id}/edit' />">

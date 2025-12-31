@@ -35,30 +35,33 @@
 		.nav-up {
 	        transform: translateY(-100%);
 	    }
+	    #content-wrapper {
+		    padding-top: 120px !important;
+		    transition: padding-top 0.3s ease;
+		}
+		
+		@media (max-width: 991.98px) {
+		    #content-wrapper {
+		        padding-top: 70px !important;
+		    }
+		}
 	</style>
 </head>
 <body>
 	<script src="<c:url value='/assets/static/js/initTheme.js' />"></script>
 	<div id="app">
-		<div id="main" class="layout-horizontal">
-		
-			<!-- Header -->
-			<jsp:include page="/WEB-INF/views/fragments/navbar.jsp" />
-
-			<!-- Main Content -->
-			<div id="content-wrapper container">
-				<div class="page-content">
-					<jsp:include page="/WEB-INF/views/${content}.jsp" />
-				</div>
-
-				<!-- Footer -->
-				<footer class="py-4 mt-5">
-	                <div class="container text-center">
-	                    <p class="mb-0">&copy; 2024 Scan2Class. All rights reserved.</p>
-	                </div>
-	            </footer>
-			</div>
-		</div>
+	    <div id="main" class="layout-horizontal d-flex flex-column min-vh-100">
+	        
+	        <jsp:include page="/WEB-INF/views/fragments/navbar.jsp" />
+	
+	        <main id="content-wrapper" class="flex-grow-1">
+                <div class="page-content">
+                    <jsp:include page="/WEB-INF/views/${content}.jsp" />
+                </div>
+	        </main>
+	
+	        <jsp:include page="/WEB-INF/views/fragments/footer.jsp" />
+	    </div>
 	</div>
 	
 	<!-- Components Script -->
@@ -69,29 +72,6 @@
 	<script src="<c:url value='/assets/extensions/apexcharts/apexcharts.min.js' />"></script>
 	<script src="<c:url value='/assets/static/js/pages/dashboard.js' />"></script>
 	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-	<script>
-	    document.addEventListener("DOMContentLoaded", function() {
-	        let lastScrollTop = 0;
-	        const mainNav = document.getElementById('navbar_scroll');
-	        const threshold = 10; // Khoảng cách cuộn tối thiểu mới kích hoạt
-	
-	        window.addEventListener('scroll', function() {
-	            let st = window.pageYOffset || document.documentElement.scrollTop;
-	
-	            // Xác định hướng cuộn
-	            if (Math.abs(lastScrollTop - st) <= threshold) return;
-	
-	            if (st > lastScrollTop && st > 75) {
-	                // Cuộn xuống -> Ẩn thanh dưới
-	                mainNav.classList.add('nav-up');
-	            } else {
-	                // Cuộn lên -> Hiện thanh dưới
-	                mainNav.classList.remove('nav-up');
-	            }
-	            lastScrollTop = st;
-	        }, false);
-	    });
-	</script>
 	<!-- Custom JS -->
 	<c:if test="${not empty assets.scripts}">
 	    <c:forEach var="js" items="${assets.scripts}">

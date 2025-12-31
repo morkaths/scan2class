@@ -5,9 +5,10 @@
     <div class="sidebar-wrapper active">
         <div class="sidebar-header position-relative">
             <div class="d-flex justify-content-between align-items-center">
-                <div class="logo">
-                    <jsp:include page="logo.jsp" />
-                </div>
+                <a class="navbar-brand fw-bold me-3" href="<c:url value='/' />">
+	                <i class="bi bi-qr-code-scan fs-3"></i>
+		    		<span class="d-none d-sm-inline fs-5">Scan2Class</span>
+	            </a>
                 <div class="theme-toggle d-flex gap-2  align-items-center mt-2">
                     <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
                         aria-hidden="true" role="img" class="iconify iconify--system-uicons" width="20"
@@ -49,7 +50,7 @@
                 <li class="sidebar-title">Menu</li>
 
                 <li class="sidebar-item">
-                    <a href="<c:url value='/admin/dashboard' />" class='sidebar-link' data-path="/admin">
+                    <a href="<c:url value='/admin/dashboard' />" class='sidebar-link' data-path="/admin/dashboard">
                         <i class="bi bi-grid-fill"></i>
                         <span>Dashboard</span>
                     </a>
@@ -109,27 +110,42 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    var currentPath = window.location.pathname.replace('${pageContext.request.contextPath}', '');
+    // 1. Chuẩn hóa currentPath
+    let currentPath = window.location.pathname.replace('${pageContext.request.contextPath}', '');
+    if (currentPath.length > 1 && currentPath.endsWith('/')) {
+        currentPath = currentPath.slice(0, -1);
+    }
     
-    // Xóa active cũ
-    document.querySelectorAll('.sidebar-item, .submenu-item').forEach(el => el.classList.remove('active'));
-    document.querySelectorAll('.submenu').forEach(el => el.classList.remove('active'));
-    
-    // Tìm và active link phù hợp
+    // 2. Xóa trạng thái active cũ (Sửa .menu-item thành .sidebar-item)
+    document.querySelectorAll('.sidebar-item, .submenu-item, .has-sub').forEach(el => {
+        el.classList.remove('active');
+    });
+
+    // 3. Tìm link phù hợp
     document.querySelectorAll('[data-path]').forEach(function(link) {
-        var path = link.getAttribute('data-path');
+        let path = link.getAttribute('data-path');
         
-        if ((path === '/' && currentPath === '') || 
-            (path === '/' && currentPath === '/') || 
-            (path !== '/' && currentPath.includes(path))) {
+        if (path.length > 1 && path.endsWith('/')) {
+            path = path.slice(0, -1);
+        }
+
+        // So sánh chính xác
+        if (currentPath === path) {
+            // Active phần tử bao ngoài (Sửa .menu-item thành .sidebar-item)
+            const parentItem = link.closest('.sidebar-item, .submenu-item');
+            if (parentItem) {
+                parentItem.classList.add('active');
+            }
             
-            // Active link
-            link.closest('.sidebar-item, .submenu-item').classList.add('active');
-            
-            // Nếu là submenu, active parent
-            if (link.closest('.submenu')) {
-                link.closest('.submenu').classList.add('active');
-                link.closest('.has-sub').classList.add('active');
+            // Nếu là mục con, active cả mục cha và mở rộng submenu
+            const submenu = link.closest('.submenu');
+            if (submenu) {
+                const hasSubParent = link.closest('.has-sub');
+                if (hasSubParent) {
+                    hasSubParent.classList.add('active');
+                    // Tùy chọn: Đảm bảo submenu được hiển thị
+                    submenu.classList.add('active'); 
+                }
             }
         }
     });

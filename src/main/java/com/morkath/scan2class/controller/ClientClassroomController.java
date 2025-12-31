@@ -50,7 +50,6 @@ public class ClientClassroomController extends BaseController {
             dto.setName(classroom.getName());
             dto.setRoom(classroom.getRoom());
             dto.setStatus(classroom.getStatus());
-            // Owner is current user, no need to set
             return dto;
         }).collect(Collectors.toList());
 

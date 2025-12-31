@@ -1,10 +1,11 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
+
 <section class="hero-section text-center py-5 py-md-5 d-flex align-items-center bg-primary text-white" 
          style="min-height: 80vh; background: linear-gradient(135deg, #435ebe 0%, #647ed1 100%);">
     <div class="container">
-        <h1 class="display-4 display-md-2 fw-bold mb-3">Hệ thống Điểm danh Thông minh</h1>
+        <h1 class="display-4 display-md-2 fw-bold mb-3 text-white">Hệ thống Điểm danh Thông minh</h1>
         <p class="lead mb-4 mx-auto shadow-text" style="max-width: 700px;">
             Quản lý lớp học hiệu quả và theo dõi điểm danh bảo mật với QR Code động và xác thực vị trí GPS.
         </p>
@@ -65,35 +66,41 @@
     <div class="container">
         <div class="row align-items-center g-5">
             <div class="col-lg-6 order-2 order-lg-1">
-                <h2 class="fw-bold mb-4">Cách mạng hóa trải nghiệm lớp học</h2>
-                <p class="text-muted mb-4 lead">Tạm biệt các bảng danh sách giấy và việc gọi tên thủ công. Scan2Class tự động hóa quy trình điểm danh, tiết kiệm thời gian giảng dạy quý báu.</p>
-                <div class="row g-3">
-                    <div class="col-sm-6">
-                        <div class="d-flex align-items-center">
-                            <i class="bi bi-check-circle-fill text-success fs-4 me-2"></i>
-                            <span class="fw-medium">Nhanh chóng & Bảo mật</span>
-                        </div>
-                    </div>
-                    <div class="col-sm-6">
-                        <div class="d-flex align-items-center">
-                            <i class="bi bi-check-circle-fill text-success fs-4 me-2"></i>
-                            <span class="fw-medium">Dễ dàng sử dụng</span>
-                        </div>
-                    </div>
-                    <div class="col-sm-6">
-                        <div class="d-flex align-items-center">
-                            <i class="bi bi-check-circle-fill text-success fs-4 me-2"></i>
-                            <span class="fw-medium">Giao diện di động mượt</span>
-                        </div>
-                    </div>
-                    <div class="col-sm-6">
-                        <div class="d-flex align-items-center">
-                            <i class="bi bi-check-circle-fill text-success fs-4 me-2"></i>
-                            <span class="fw-medium">Hỗ trợ thống kê</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
+			    <h2 class="fw-bold mb-4">Cách mạng hóa trải nghiệm lớp học</h2>
+			    <p class="text-muted mb-4 lead">
+			        Tạm biệt các bảng danh sách giấy và việc gọi tên thủ công. Scan2Class tự động hóa quy trình điểm danh, tiết kiệm thời gian giảng dạy quý báu.
+			    </p>
+			    
+			    <div class="row g-3">
+			        <div class="col-sm-6 mb-2">
+			            <div class="d-flex align-items-center">
+			                <i class="bi bi-check-circle-fill text-success fs-5 me-2 d-inline-flex align-self-center"></i>
+			                <span class="fw-medium text-dark">Nhanh chóng & Bảo mật</span>
+			            </div>
+			        </div>
+			
+			        <div class="col-sm-6 mb-2">
+			            <div class="d-flex align-items-center">
+			                <i class="bi bi-check-circle-fill text-success fs-5 me-2 d-inline-flex align-self-center"></i>
+			                <span class="fw-medium text-dark">Dễ dàng sử dụng</span>
+			            </div>
+			        </div>
+			        
+			        <div class="col-sm-6 mb-2">
+			            <div class="d-flex align-items-center">
+			                <i class="bi bi-check-circle-fill text-success fs-5 me-2 d-inline-flex align-self-center"></i>
+			                <span class="fw-medium text-dark">Giao diện di động mượt</span>
+			            </div>
+			        </div>
+			        
+			        <div class="col-sm-6 mb-2">
+			            <div class="d-flex align-items-center">
+			                <i class="bi bi-check-circle-fill text-success fs-5 me-2 d-inline-flex align-self-center"></i>
+			                <span class="fw-medium text-dark">Hỗ trợ thống kê</span>
+			            </div>
+			        </div>
+			    </div>
+			</div>
             <div class="col-lg-6 order-1 order-lg-2">
                 <img src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" 
                      alt="Sinh viên đang học tập" 
