@@ -12,5 +12,7 @@ import com.morkath.scan2class.entity.attendance.SessionEntity;
 public interface SessionRepository extends JpaRepository<SessionEntity, Long> {
     SessionEntity findByToken(String token);
 
+    int countByClassroomId(Long classroomId);
+
     List<SessionEntity> findByActiveTrueAndEndTimeBefore(LocalDateTime now);
 }

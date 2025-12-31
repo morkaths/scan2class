@@ -1,12 +1,27 @@
 package com.morkath.scan2class.service.impl;
 
 import java.time.LocalDateTime;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
+import org.apache.poi.ss.usermodel.BorderStyle;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.Font;
+import org.apache.poi.ss.usermodel.HorizontalAlignment;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.xssf.streaming.SXSSFSheet;
+import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.morkath.scan2class.core.BaseServiceImpl;
+import com.morkath.scan2class.dto.ClassroomStatsDTO;
+import com.morkath.scan2class.dto.SessionStatsDTO;
+import com.morkath.scan2class.dto.StudentStatDTO;
 import com.morkath.scan2class.entity.attendance.AttendanceRecordEntity;
 import com.morkath.scan2class.entity.attendance.SessionEntity;
 import com.morkath.scan2class.entity.auth.UserEntity;
@@ -21,27 +36,24 @@ public class AttendanceServiceImpl extends BaseServiceImpl<AttendanceRecordEntit
 
     private final SessionRepository sessionRepository;
     private final AttendanceRecordRepository attendanceRecordRepository;
+    private final com.morkath.scan2class.repository.auth.UserRepository userRepository;
 
-    @org.springframework.beans.factory.annotation.Value("${demo.mode.skip-location:false}")
+    @Value("${demo.mode.skip-location:false}")
     private boolean skipLocationCheck;
 
     @Autowired
     public AttendanceServiceImpl(AttendanceRecordRepository attendanceRecordRepository,
-            SessionRepository sessionRepository) {
+            SessionRepository sessionRepository,
+            com.morkath.scan2class.repository.auth.UserRepository userRepository) {
         super(attendanceRecordRepository);
         this.attendanceRecordRepository = attendanceRecordRepository;
         this.sessionRepository = sessionRepository;
+        this.userRepository = userRepository;
     }
 
     @Override
     public void attend(UserEntity user, String token, Double lat, Double lon, Double accuracy, String deviceInfo)
             throws Exception {
-        // ... (Previous checks 1-5 remain same, assumed implied or I should verify I am
-        // not overwriting them)
-        // Wait, replace_file_content replaces contiguous blocks. I need to be careful.
-        // I will use multi_replace for safer updates if I can't see the whole file.
-        // But I have viewed the file. The method is lines 34-98.
-
         // 1. Find Session by Token
         SessionEntity session = sessionRepository.findByToken(token);
         if (session == null) {
@@ -77,12 +89,9 @@ public class AttendanceServiceImpl extends BaseServiceImpl<AttendanceRecordEntit
                 throw new Exception("Không thể xác định vị trí của bạn.");
             }
 
-            // Accuracy Margin Logic
             double dist = session.calculateDistance(lat, lon);
             double allowedRadius = session.getRadius();
             if (accuracy != null && accuracy > 0) {
-                // Apply margin: allowed radius + student's accuracy (limit to acceptable value
-                // if needed, but per requirements: radius + accuracy/2)
                 allowedRadius += (accuracy / 2);
             }
 
@@ -101,16 +110,166 @@ public class AttendanceServiceImpl extends BaseServiceImpl<AttendanceRecordEntit
         record.setLatitude(lat);
         record.setLongitude(lon);
         record.setDeviceInfo(deviceInfo);
-        record.setDeviceUid("BROWSER"); // Or session ID/cookie if needed
-
-        // Determine Status based on time?
-        // Logic: If checkin > startTime + gracePeriod -> LATE.
-        // Since we don't have grace period config yet, let's assume PRESENT if within
-        // session time.
-        // Or maybe 15 mins rule? Let's default to PRESENT for now as per requirements.
+        record.setDeviceUid("BROWSER");
         record.setStatus("PRESENT");
-
         save(record);
     }
 
+    @Override
+    public void updateAttendanceStatus(Long userId, Long sessionId, String status, String note, UserEntity teacher)
+            throws Exception {
+        AttendanceRecordEntity record = attendanceRecordRepository.findBySessionIdAndUserId(sessionId, userId);
+
+        if (record == null) {
+            // Create new record
+            UserEntity user = userRepository.findById(userId)
+                    .orElseThrow(() -> new Exception("Sinh viên không tồn tại."));
+            SessionEntity session = sessionRepository.findById(sessionId)
+                    .orElseThrow(() -> new Exception("Phiên điểm danh không tồn tại."));
+
+            record = new AttendanceRecordEntity(session, user);
+            record.setCheckin(LocalDateTime.now());
+            record.setDeviceUid("MANUAL");
+            record.setDeviceInfo("Manual Update by Teacher");
+        }
+
+        // Verify Teacher Ownership
+        if (!record.getSession().getClassroom().getOwner().getId().equals(teacher.getId())) {
+            throw new Exception("Bạn không có quyền sửa đổi điểm danh của lớp này.");
+        }
+
+        record.setStatus(status);
+        save(record);
+    }
+
+    @Override
+    public ClassroomStatsDTO getClassroomStatistics(Long classroomId)  {
+        ClassroomStatsDTO stats = new ClassroomStatsDTO();
+        stats.setClassroomId(classroomId);
+
+        List<Object[]> rawStats = attendanceRecordRepository.getStudentStatsByClassroom(classroomId);
+        List<StudentStatDTO> studentStats = new java.util.ArrayList<>();
+
+        int totalSessions = sessionRepository.countByClassroomId(classroomId);
+        stats.setTotalSessions(totalSessions);
+
+        for (Object[] row : rawStats) {
+            StudentStatDTO dto = new StudentStatDTO();
+            dto.setUserId(((Number) row[0]).longValue());
+            dto.setUsername((String) row[1]);
+            dto.setFullName((String) row[2]);
+
+            // Safe casting for counts
+            int present = ((Number) row[3]).intValue();
+            int late = ((Number) row[4]).intValue();
+
+            dto.setPresentCount(present);
+            dto.setLateCount(late);
+
+            int attended = present + late;
+            int calculatedAbsent = totalSessions - attended;
+            dto.setAbsentCount(Math.max(0, calculatedAbsent));
+
+            dto.setTotalSessions(totalSessions);
+
+            if (totalSessions > 0) {
+                double rate = (double) attended / totalSessions * 100;
+                dto.setAttendanceRate(Math.round(rate * 100.0) / 100.0);
+            } else {
+                dto.setAttendanceRate(100.0);
+            }
+
+            studentStats.add(dto);
+        }
+        stats.setStudentStats(studentStats);
+
+        Map<String, Integer> overall = new HashMap<>();
+        overall.put("PRESENT",
+                studentStats.stream().mapToInt(StudentStatDTO::getPresentCount).sum());
+        overall.put("LATE",
+                studentStats.stream().mapToInt(StudentStatDTO::getLateCount).sum());
+        overall.put("ABSENT",
+                studentStats.stream().mapToInt(StudentStatDTO::getAbsentCount).sum());
+
+        stats.setOverallDidAttend(overall);
+
+        return stats;
+    }
+
+    @Override
+    public SessionStatsDTO getSessionStatistics(Long sessionId) throws Exception {
+        SessionEntity session = sessionRepository.findById(sessionId)
+                .orElseThrow(() -> new Exception("Phiên điểm danh không tồn tại."));
+
+        SessionStatsDTO dto = new SessionStatsDTO();
+        dto.setSessionId(sessionId);
+        dto.setSessionName(session.getName());
+
+        // Total Students = Participants in Class
+        int totalStudents = session.getClassroom().getParticipants().size();
+        dto.setTotalStudents(totalStudents);
+
+        int present = (int) attendanceRecordRepository.countBySessionIdAndStatus(sessionId, "PRESENT");
+        int late = (int) attendanceRecordRepository.countBySessionIdAndStatus(sessionId, "LATE");
+
+        dto.setPresentCount(present);
+        dto.setLateCount(late);
+
+        // Absent = Total - (Present + Late)
+        int absent = totalStudents - (present + late);
+        dto.setAbsentCount(Math.max(0, absent));
+
+        return dto;
+    }
+
+    @Override
+    public byte[] exportClassroomStatsToExcel(Long classroomId) throws Exception {
+        ClassroomStatsDTO stats = getClassroomStatistics(classroomId);
+
+        try (SXSSFWorkbook workbook = new SXSSFWorkbook(
+                100)) {
+            org.apache.poi.ss.usermodel.Sheet sheet = workbook.createSheet("Thống kê điểm danh");
+
+            // --- 1. KHỞI TẠO STYLE DÙNG CHUNG ---
+            CellStyle headerStyle = workbook.createCellStyle();
+            Font headerFont = workbook.createFont();
+            headerFont.setBold(true);
+            headerStyle.setFont(headerFont);
+            headerStyle.setAlignment(HorizontalAlignment.CENTER);
+            headerStyle.setBorderBottom(BorderStyle.THIN);
+
+            // --- 2. XỬ LÝ HEADER ---
+            org.apache.poi.ss.usermodel.Row headerRow = sheet.createRow(0);
+            String[] headers = { "STT", "Mã SV", "Họ tên", "Tổng buổi", "Có mặt", "Đi muộn", "Vắng", "Tỷ lệ (%)" };
+            for (int i = 0; i < headers.length; i++) {
+                Cell cell = headerRow.createCell(i);
+                cell.setCellValue(headers[i]);
+                cell.setCellStyle(headerStyle);
+            }
+
+            // --- 3. XỬ LÝ DATA ---
+            int rowNum = 1;
+            for (StudentStatDTO s : stats.getStudentStats()) {
+                Row row = sheet.createRow(rowNum++);
+                row.createCell(0).setCellValue(rowNum - 1);
+                row.createCell(1).setCellValue(s.getUsername());
+                row.createCell(2).setCellValue(s.getFullName());
+                row.createCell(3).setCellValue(s.getTotalSessions());
+                row.createCell(4).setCellValue(s.getPresentCount());
+                row.createCell(5).setCellValue(s.getLateCount());
+                row.createCell(6).setCellValue(s.getAbsentCount());
+                row.createCell(7).setCellValue(s.getAttendanceRate());
+            }
+
+            ((SXSSFSheet) sheet).trackAllColumnsForAutoSizing();
+            for (int i = 0; i < headers.length; i++) {
+                sheet.autoSizeColumn(i);
+            }
+
+            java.io.ByteArrayOutputStream out = new java.io.ByteArrayOutputStream();
+            workbook.write(out);
+            workbook.dispose();
+            return out.toByteArray();
+        }
+    }
 }

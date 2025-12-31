@@ -6,15 +6,23 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import java.util.Map;
 import java.util.HashMap;
 
 import com.morkath.scan2class.core.BaseController;
+import com.morkath.scan2class.dto.AssetDto;
+import com.morkath.scan2class.dto.ClassroomStatsDTO;
+import com.morkath.scan2class.dto.SessionStatsDTO;
+import com.morkath.scan2class.entity.attendance.SessionEntity;
 import com.morkath.scan2class.entity.auth.UserEntity;
+import com.morkath.scan2class.repository.attendance.SessionRepository;
 import com.morkath.scan2class.service.AttendanceService;
 import com.morkath.scan2class.service.UserService;
 
@@ -26,7 +34,7 @@ public class AttendanceController extends BaseController {
     private AttendanceService attendanceService;
 
     @Autowired
-    private com.morkath.scan2class.repository.attendance.SessionRepository sessionRepository;
+    private SessionRepository sessionRepository;
 
     @Autowired
     private UserService userService;
@@ -34,7 +42,7 @@ public class AttendanceController extends BaseController {
     @GetMapping
     public String scan(@RequestParam(name = "token", required = false) String token, Model model,
             HttpServletRequest request) {
-    	
+
         if (token == null || token.isEmpty()) {
             return "redirect:/";
         }
@@ -63,7 +71,7 @@ public class AttendanceController extends BaseController {
             attendanceService.attend(user, token, latitude, longitude, accuracy, deviceInfo);
 
             // Fetch session to calculate distance for feedback
-            com.morkath.scan2class.entity.attendance.SessionEntity session = sessionRepository.findByToken(token);
+            SessionEntity session = sessionRepository.findByToken(token);
             double dist = 0.0;
             if (session != null && latitude != null && longitude != null) {
                 dist = session.calculateDistance(latitude, longitude);
@@ -79,6 +87,78 @@ public class AttendanceController extends BaseController {
             response.put("success", false);
             response.put("message", e.getMessage());
             return ResponseEntity.badRequest().body(response);
+        }
+    }
+
+    @PostMapping("/manual-update")
+    public ResponseEntity<Map<String, Object>> updateStatus(
+            @RequestParam("userId") Long userId,
+            @RequestParam("sessionId") Long sessionId,
+            @RequestParam("status") String status,
+            @RequestParam(name = "note", required = false) String note) {
+
+        Map<String, Object> response = new HashMap<>();
+        UserEntity teacher = userService.getCurrent();
+
+        try {
+            attendanceService.updateAttendanceStatus(userId, sessionId, status, note, teacher);
+
+            response.put("success", true);
+            response.put("message", "Cập nhật trạng thái thành công!");
+            return ResponseEntity.ok(response);
+
+        } catch (Exception e) {
+            response.put("success", false);
+            response.put("message", e.getMessage());
+            return ResponseEntity.badRequest().body(response);
+        }
+    }
+
+    @GetMapping("/classrooms/{classroomId}/analytics")
+    public String analytics(@PathVariable("classroomId") Long classroomId,
+            Model model) {
+        model.addAttribute("classroomId", classroomId);
+        AssetDto assets = new AssetDto("Thống kê điểm danh");
+        assets.addStylesheets("/assets/compiled/css/table-datatable.css");
+        assets.addScripts("/assets/extensions/simple-datatables/umd/simple-datatables.js");
+        assets.addScripts("/assets/static/js/pages/simple-datatables.js");
+        preparePage(model, "pages/classroom/stats", assets);
+        return "layouts/horizontal";
+    }
+
+    @GetMapping("/classrooms/{classroomId}/stats")
+    public ResponseEntity<?> getClassroomStats(@PathVariable("classroomId") Long classroomId) {
+        try {
+            ClassroomStatsDTO stats = attendanceService.getClassroomStatistics(classroomId);
+            return ResponseEntity.ok(stats);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
+        }
+    }
+
+    @GetMapping("/sessions/{sessionId}/stats")
+    public ResponseEntity<?> getSessionStats(@PathVariable("sessionId") Long sessionId) {
+        try {
+            SessionStatsDTO stats = attendanceService.getSessionStatistics(sessionId);
+            return ResponseEntity.ok(stats);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
+        }
+    }
+
+    @GetMapping("/classrooms/{classroomId}/export")
+    public ResponseEntity<byte[]> exportStats(@PathVariable("classroomId") Long classroomId) {
+        try {
+            byte[] fileContent = attendanceService.exportClassroomStatsToExcel(classroomId);
+
+            return ResponseEntity.ok()
+                    .header(HttpHeaders.CONTENT_DISPOSITION,
+                            "attachment; filename=\"report_" + classroomId + ".xlsx\"")
+                    .contentType(MediaType
+                            .parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"))
+                    .body(fileContent);
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
         }
     }
 }

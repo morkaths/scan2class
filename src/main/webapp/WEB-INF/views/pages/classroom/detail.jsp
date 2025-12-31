@@ -42,6 +42,11 @@
 					                    </div>
 					
 					                    <div class="d-flex flex-column flex-sm-row gap-2 w-100 w-md-auto">
+                                            <a href="<c:url value='/attend/classrooms/${classroom.id}/analytics' />"
+					                                class="btn btn-outline-primary w-100 w-sm-auto">
+					                            <i class="bi bi-graph-up me-2"></i>Thống kê
+					                        </a>
+					                        
 					                        <button type="button" class="btn btn-info text-white w-100 w-sm-auto" 
 					                                data-bs-toggle="modal" data-bs-target="#joinQrModal">
 					                            <i class="bi bi-qr-code me-2"></i>Mã mời

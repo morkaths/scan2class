@@ -10,7 +10,7 @@
             Quản lý lớp học hiệu quả và theo dõi điểm danh bảo mật với QR Code động và xác thực vị trí GPS.
         </p>
         <div class="d-flex flex-column flex-sm-row justify-content-center gap-3 px-4">
-            <a href="<c:url value='/auth/register' />" 
+            <a href="<c:url value='/classrooms/create' />" 
                class="btn btn-light btn-lg px-md-5 fw-bold text-primary shadow">Bắt đầu ngay</a>
             <a href="#features" 
                class="btn btn-outline-light btn-lg px-md-5 shadow-sm">Tìm hiểu thêm</a>
@@ -18,7 +18,7 @@
     </div>
 </section>
 
-<section id="features" class="py-5 bg-light">
+<section id="features" class="py-5">
     <div class="container">
         <div class="text-center mb-5 px-3">
             <h2 class="fw-bold">Tính năng nổi bật</h2>
@@ -75,28 +75,28 @@
 			        <div class="col-sm-6 mb-2">
 			            <div class="d-flex align-items-center">
 			                <i class="bi bi-check-circle-fill text-success fs-5 me-2 d-inline-flex align-self-center"></i>
-			                <span class="fw-medium text-dark">Nhanh chóng & Bảo mật</span>
+			                <span class="fw-medium">Nhanh chóng & Bảo mật</span>
 			            </div>
 			        </div>
 			
 			        <div class="col-sm-6 mb-2">
 			            <div class="d-flex align-items-center">
 			                <i class="bi bi-check-circle-fill text-success fs-5 me-2 d-inline-flex align-self-center"></i>
-			                <span class="fw-medium text-dark">Dễ dàng sử dụng</span>
+			                <span class="fw-medium">Dễ dàng sử dụng</span>
 			            </div>
 			        </div>
 			        
 			        <div class="col-sm-6 mb-2">
 			            <div class="d-flex align-items-center">
 			                <i class="bi bi-check-circle-fill text-success fs-5 me-2 d-inline-flex align-self-center"></i>
-			                <span class="fw-medium text-dark">Giao diện di động mượt</span>
+			                <span class="fw-medium">Giao diện di động mượt</span>
 			            </div>
 			        </div>
 			        
 			        <div class="col-sm-6 mb-2">
 			            <div class="d-flex align-items-center">
 			                <i class="bi bi-check-circle-fill text-success fs-5 me-2 d-inline-flex align-self-center"></i>
-			                <span class="fw-medium text-dark">Hỗ trợ thống kê</span>
+			                <span class="fw-medium">Hỗ trợ thống kê</span>
 			            </div>
 			        </div>
 			    </div>

@@ -5,7 +5,7 @@
 
 <div class="container py-5">
 	<div class="card shadow-sm border-0">
-		<div class="card-header bg-white py-2 d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
+		<div class="card-header py-2 d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
 		    <div>
 		        <h5 class="mb-0 fw-bold text-primary align-items-center">
 		            <i class="bi bi-mortarboard-fill fs-4"></i>

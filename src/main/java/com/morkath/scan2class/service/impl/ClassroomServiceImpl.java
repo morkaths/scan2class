@@ -6,18 +6,20 @@ import org.springframework.transaction.annotation.Transactional;
 import com.morkath.scan2class.core.BaseServiceImpl;
 import com.morkath.scan2class.entity.auth.UserEntity;
 import com.morkath.scan2class.entity.classroom.ClassroomEntity;
+import com.morkath.scan2class.repository.attendance.AttendanceRecordRepository;
+import com.morkath.scan2class.repository.auth.UserRepository;
 import com.morkath.scan2class.repository.classroom.ClassroomRepository;
 import com.morkath.scan2class.service.ClassroomService;
 
 @Service
 public class ClassroomServiceImpl extends BaseServiceImpl<ClassroomEntity, Long> implements ClassroomService {
     private final ClassroomRepository classroomRepository;
-    private final com.morkath.scan2class.repository.attendance.AttendanceRecordRepository attendanceRecordRepository;
-    private final com.morkath.scan2class.repository.auth.UserRepository userRepository;
+    private final AttendanceRecordRepository attendanceRecordRepository;
+    private final UserRepository userRepository;
 
     public ClassroomServiceImpl(ClassroomRepository classroomRepository,
-            com.morkath.scan2class.repository.attendance.AttendanceRecordRepository attendanceRecordRepository,
-            com.morkath.scan2class.repository.auth.UserRepository userRepository) {
+            AttendanceRecordRepository attendanceRecordRepository,
+            UserRepository userRepository) {
         super(classroomRepository);
         this.classroomRepository = classroomRepository;
         this.attendanceRecordRepository = attendanceRecordRepository;

@@ -27,8 +27,7 @@
                                                 <i class="bi bi-geo-alt me-1"></i>Cập nhật vị trí hiện tại
                                             </button>
                                         </div>
-                                        <div class="alert alert-light border d-flex align-items-center" role="alert"
-                                            id="geo-status">
+                                        <div class="alert alert-light border align-items-center" role="alert" id="geo-status">
                                             <c:choose>
                                                 <c:when test="${not empty dto.latitude}">
                                                     <i class="bi bi-check-circle-fill text-success me-2"></i>
@@ -43,7 +42,8 @@
                                     </div>
 
                                     <div class="mb-3">
-                                        <label for="name" class="form-label fw-bold">Tên buổi học
+                                        <label for="name" class="form-label fw-bold">
+                                        	Tên buổi học
                                             <span class="text-danger">*</span>
                                         </label>
                                         <form:input path="name" cssClass="form-control" id="name"
@@ -53,17 +53,16 @@
 
                                     <div class="row">
                                         <div class="col-md-6 mb-3">
-                                            <label for="duration" class="form-label fw-bold">Thêm
-                                                thời gian (phút)</label>
+                                            <label for="duration" class="form-label fw-bold">
+                                            	Thêm thời gian (phút)
+                                           	</label>
                                             <form:input path="duration" type="number" cssClass="form-control"
                                                 id="duration" min="0" max="180" />
-                                            <div class="form-text">Nhập số phút muốn cộng thêm (0 để
-                                                giữ nguyên).</div>
+                                            <div class="form-text">Nhập số phút muốn cộng thêm (0 để giữ nguyên).</div>
                                             <form:errors path="duration" cssClass="text-danger small" />
                                         </div>
                                         <div class="col-md-6 mb-3">
-                                            <label for="radius" class="form-label fw-bold">Bán kính
-                                                (m)</label>
+                                            <label for="radius" class="form-label fw-bold">Bán kính (m)</label>
                                             <form:input path="radius" type="number" cssClass="form-control" id="radius"
                                                 min="10" />
                                             <form:errors path="radius" cssClass="text-danger small" />

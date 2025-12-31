@@ -1,7 +1,6 @@
 package com.morkath.scan2class.repository.attendance;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -9,14 +8,31 @@ import org.springframework.stereotype.Repository;
 import com.morkath.scan2class.entity.attendance.AttendanceRecordEntity;
 import com.morkath.scan2class.entity.attendance.SessionEntity;
 import com.morkath.scan2class.entity.auth.UserEntity;
+import java.util.List;
 
 @Repository
 public interface AttendanceRecordRepository extends JpaRepository<AttendanceRecordEntity, Long> {
     AttendanceRecordEntity findBySessionAndUser(SessionEntity session, UserEntity user);
 
+    AttendanceRecordEntity findBySessionIdAndUserId(Long sessionId, Long userId);
+
     boolean existsBySessionIdAndUserId(Long sessionId, Long userId);
 
-    @Modifying
     @Query("DELETE FROM AttendanceRecordEntity ar WHERE ar.user.id = :userId AND ar.session.id IN (SELECT s.id FROM SessionEntity s WHERE s.classroom.id = :classroomId)")
     void deleteByStudentAndClassroom(@Param("userId") Long userId, @Param("classroomId") Long classroomId);
+
+    // Analytics
+    long countBySessionIdAndStatus(Long sessionId, String status);
+
+    @Query(value = "SELECT u.uid, u.username, u.fullname, " +
+            "COALESCE(SUM(CASE WHEN ar.status = 'PRESENT' THEN 1 ELSE 0 END), 0) as present_count, " +
+            "COALESCE(SUM(CASE WHEN ar.status = 'LATE' THEN 1 ELSE 0 END), 0) as late_count, " +
+            "COALESCE(SUM(CASE WHEN ar.status = 'ABSENT' THEN 1 ELSE 0 END), 0) as absent_count " +
+            "FROM class_participants cp " +
+            "JOIN users u ON cp.user_id = u.uid " +
+            "LEFT JOIN attendance_records ar ON ar.user_id = u.uid " +
+            "AND ar.session_id IN (SELECT id FROM sessions WHERE class_id = :classroomId) " +
+            "WHERE cp.class_id = :classroomId " +
+            "GROUP BY u.uid, u.username, u.fullname", nativeQuery = true)
+    List<Object[]> getStudentStatsByClassroom(@Param("classroomId") Long classroomId);
 }

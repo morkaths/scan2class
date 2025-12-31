@@ -60,7 +60,8 @@ public class AttendanceRecordEntity extends BaseEntity {
 		this.cheatStatus = "CLEAN";
 	}
 
-	public AttendanceRecordEntity(SessionEntity session, UserEntity user, String status, Double latitude, Double longitude,
+	public AttendanceRecordEntity(SessionEntity session, UserEntity user, String status, Double latitude,
+			Double longitude,
 			Double distance, String deviceUid, String deviceInfo, String cheatStatus) {
 		super();
 		this.session = session;
@@ -74,18 +75,18 @@ public class AttendanceRecordEntity extends BaseEntity {
 		this.deviceInfo = deviceInfo;
 		this.cheatStatus = cheatStatus;
 	}
-	
-//	Lifecycle Methods
-	
+
+	// Lifecycle Methods
+
 	@PrePersist
 	public void prePersist() {
 		if (this.checkin == null) {
 			this.checkin = LocalDateTime.now();
 		}
 	}
-	
-//	Business Methods
-	
+
+	// Business Methods
+
 	public void calculateStatus() {
 		if (this.checkin == null)
 			this.checkin = LocalDateTime.now();
@@ -93,13 +94,13 @@ public class AttendanceRecordEntity extends BaseEntity {
 		LocalDateTime end = session.getEndTime();
 
 		if (!this.checkin.isAfter(end) && !this.checkin.isBefore(start)) {
-	        this.status = "PRESENT";
-	    } else {
-	        this.status = "ABSENT";
-	    }
+			this.status = "PRESENT";
+		} else {
+			this.status = "ABSENT";
+		}
 	}
-	
-//	Getters and Setters
+
+	// Getters and Setters
 
 	public SessionEntity getSession() {
 		return session;
