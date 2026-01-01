@@ -55,16 +55,12 @@
 						<a href="#" data-bs-toggle="dropdown" aria-expanded="false">
 							<div class="user-menu d-flex">
 								<div class="user-name text-end me-3">
-									<h6 class="mb-0 text-gray-600">
-										<sec:authentication property="principal.username" />
-									</h6>
-									<p class="mb-0 text-sm text-gray-600">
-										<sec:authentication property="principal.user.email" />
-									</p>
+									<h6 class="mb-0 text-gray-600">${displayName}</h6>
+					                <p class="mb-0 text-sm text-gray-600">${displayEmail}</p>
 								</div>
 								<div class="user-img d-flex align-items-center">
 									<div class="avatar avatar-md">
-										<img src="<c:url value='/assets/compiled/jpg/1.jpg' />">
+										<img src="${not empty displayAvatar ? displayAvatar : '/assets/compiled/jpg/1.jpg'}">
 									</div>
 								</div>
 							</div>

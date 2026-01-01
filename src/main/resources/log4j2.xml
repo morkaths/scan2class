@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="WARN">
+    <Appenders>
+        <Console name="Console" target="SYSTEM_OUT">
+            <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
+        </Console>
+    </Appenders>
+    <Loggers>
+        <!-- Log chi tiết cho CustomOAuth2UserService -->
+        <Logger name="com.morkath.scan2class.security.service.CustomOAuth2UserService" level="info" additivity="false">
+            <AppenderRef ref="Console"/>
+        </Logger>
+        
+        <!-- Log cho Spring Security OAuth2 -->
+        <Logger name="org.springframework.security.oauth2" level="debug" additivity="false">
+            <AppenderRef ref="Console"/>
+        </Logger>
+        
+        <!-- Log chung cho ứng dụng -->
+        <Logger name="com.morkath.scan2class" level="info" additivity="false">
+            <AppenderRef ref="Console"/>
+        </Logger>
+        
+        <Root level="warn">
+            <AppenderRef ref="Console"/>
+        </Root>
+    </Loggers>
+</Configuration>

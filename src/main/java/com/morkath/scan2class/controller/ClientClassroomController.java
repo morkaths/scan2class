@@ -30,9 +30,14 @@ import org.springframework.http.ResponseEntity;
 import java.util.Map;
 import java.util.HashMap;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 @Controller
 @RequestMapping("/classrooms")
 public class ClientClassroomController extends BaseController {
+
+    private static final Logger logger = LoggerFactory.getLogger(ClientClassroomController.class);
 
     @Autowired
     private ClassroomService classroomService;
@@ -71,9 +76,11 @@ public class ClientClassroomController extends BaseController {
 
     @PostMapping("/create")
     public String doCreate(@Valid @ModelAttribute("dto") ClassroomDto dto, BindingResult result, Model model) {
-        // Validate code uniqueness if provided (required per UI)
+        logger.info("USER - Starting Create Classroom: Code={}, Name={}", dto.getCode(), dto.getName());
+
         if (dto.getCode() != null && !dto.getCode().isEmpty()) {
             if (classroomService.getByCode(dto.getCode()) != null) {
+                logger.warn("Duplicate Classroom Code detected: {}", dto.getCode());
                 result.rejectValue("code", "error.code", "Mã lớp đã tồn tại");
             }
         }
@@ -83,19 +90,40 @@ public class ClientClassroomController extends BaseController {
         }
 
         if (result.hasErrors()) {
+            logger.warn("Validation failed: {}", result.getAllErrors());
             model.addAttribute("dto", dto);
             preparePage(model, "pages/classroom/create", "Thêm lớp học mới");
             return "layouts/horizontal";
         }
-        UserEntity currentUser = userService.getCurrent();
-        ClassroomEntity classroom = new ClassroomEntity();
 
-        classroom.setCode(dto.getCode());
-        classroom.setName(dto.getName());
-        classroom.setRoom(dto.getRoom());
-        classroom.setStatus(1);
-        classroom.setOwner(currentUser);
-        classroomService.save(classroom);
+        try {
+            UserEntity currentUser = userService.getCurrent();
+            logger.info("Current User: {}", (currentUser != null ? currentUser.getUsername() : "NULL"));
+
+            if (currentUser == null) {
+                logger.error("User not found in session!");
+                return "redirect:/auth/login";
+            }
+
+            ClassroomEntity classroom = new ClassroomEntity();
+            classroom.setCode(dto.getCode());
+            classroom.setName(dto.getName());
+            classroom.setRoom(dto.getRoom());
+            classroom.setStatus(1);
+            classroom.setOwner(currentUser);
+
+            classroomService.save(classroom);
+            logger.info("Classroom created successfully: {}", classroom.getId());
+
+        } catch (Exception e) {
+            logger.error("Error saving classroom: {}", e.getMessage(), e);
+            e.printStackTrace();
+            result.reject("error.global", "Lỗi hệ thống: " + e.getMessage());
+            model.addAttribute("dto", dto);
+            preparePage(model, "pages/classroom/create", "Thêm lớp học mới");
+            return "layouts/horizontal";
+        }
+
         return "redirect:/classrooms";
     }
 

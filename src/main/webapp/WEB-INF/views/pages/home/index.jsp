@@ -10,8 +10,8 @@
             Quản lý lớp học hiệu quả và theo dõi điểm danh bảo mật với QR Code động và xác thực vị trí GPS.
         </p>
         <div class="d-flex flex-column flex-sm-row justify-content-center gap-3 px-4">
-            <a href="<c:url value='/classrooms/create' />" 
-               class="btn btn-light btn-lg px-md-5 fw-bold text-primary shadow">Bắt đầu ngay</a>
+            <a href="<c:url value='/auth/login' />" 
+               class="btn btn-light btn-lg px-md-5 fw-bold text-primary shadow">Đăng nhập ngay</a>
             <a href="#features" 
                class="btn btn-outline-light btn-lg px-md-5 shadow-sm">Tìm hiểu thêm</a>
         </div>

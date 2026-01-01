@@ -51,6 +51,15 @@
                         </div>
                         <button type="submit" class="btn btn-primary btn-block btn-lg shadow-lg mt-5">Log in</button>
                     </form:form>
+
+                    <div class="text-center mt-4 mb-4">
+                        <span class="text-gray-600">OR</span>
+                    </div>
+
+                    <a href="${pageContext.request.contextPath}/oauth2/authorization/google" class="btn btn-lg btn-block btn-outline-dark shadow-sm d-flex align-items-center justify-content-center">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg" alt="Google" style="width: 20px; height: 20px; margin-right: 10px;">
+                        Login with Google
+                    </a>
                     <div class="text-center mt-5 text-lg fs-4">
                         <p class="text-gray-600">Don't have an account?
                             <a href="<c:url value='/auth/register'/>" class="font-bold">Sign up</a>.

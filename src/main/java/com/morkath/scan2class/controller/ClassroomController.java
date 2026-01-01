@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import com.morkath.scan2class.core.BaseController;
 import com.morkath.scan2class.dto.AssetDto;
 import com.morkath.scan2class.dto.ClassroomDto;
+import com.morkath.scan2class.entity.auth.UserEntity;
 import com.morkath.scan2class.entity.classroom.ClassroomEntity;
 import com.morkath.scan2class.service.ClassroomService;
 import com.morkath.scan2class.service.UserService;
@@ -56,12 +57,34 @@ public class ClassroomController extends BaseController {
             preparePage(model, "pages/admin/classroom/create", "Create New Classroom");
             return "layouts/vertical";
         }
+
+        // Check for duplicate code
+        if (classroomService.getByCode(dto.getCode()) != null) {
+            result.rejectValue("code", "error.dto", "Mã lớp học đã tồn tại");
+            model.addAttribute("dto", dto);
+            model.addAttribute("users", userService.getAll());
+            preparePage(model, "pages/admin/classroom/create", "Create New Classroom");
+            return "layouts/vertical";
+        }
+
+        // Manual validation for ownerId
+        if (dto.getOwnerId() == null) {
+            result.rejectValue("ownerId", "error.dto", "Giảng viên là bắt buộc");
+            model.addAttribute("dto", dto);
+            model.addAttribute("users", userService.getAll());
+            preparePage(model, "pages/admin/classroom/create", "Create New Classroom");
+            return "layouts/vertical";
+        }
+
         ClassroomEntity classroom = new ClassroomEntity();
         classroom.setCode(dto.getCode());
         classroom.setName(dto.getName());
         classroom.setRoom(dto.getRoom());
         classroom.setStatus(dto.getStatus());
-        classroom.setOwner(userService.getById(dto.getOwnerId()));
+
+        UserEntity owner = userService.getById(dto.getOwnerId());
+        classroom.setOwner(owner);
+
         classroomService.save(classroom);
         return "redirect:/admin/classrooms";
     }

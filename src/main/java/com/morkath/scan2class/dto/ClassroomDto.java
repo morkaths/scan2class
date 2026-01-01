@@ -1,12 +1,12 @@
 package com.morkath.scan2class.dto;
 
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 public class ClassroomDto {
     private Long id;
 
+    @NotBlank(message = "Code is required")
     @Size(max = 50, message = "Code must be less than 50 characters")
     private String code;
 
@@ -19,9 +19,8 @@ public class ClassroomDto {
 
     private int status = 1;
 
-    @NotNull(message = "Owner is required")
     private Long ownerId;
-    
+
     private UserDto owner;
 
     public Long getId() {
@@ -72,11 +71,11 @@ public class ClassroomDto {
         this.ownerId = ownerId;
     }
 
-	public UserDto getOwner() {
-		return owner;
-	}
+    public UserDto getOwner() {
+        return owner;
+    }
 
-	public void setOwner(UserDto owner) {
-		this.owner = owner;
-	}
+    public void setOwner(UserDto owner) {
+        this.owner = owner;
+    }
 }

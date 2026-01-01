@@ -147,9 +147,6 @@ uri="http://sargue.net/jsptags/time" %>
         >
           <h5 class="card-title mb-0">Danh sách điểm danh</h5>
           <div>
-              <a href="<c:url value='/attend/classrooms/${classroom.id}/analytics'/>" class="btn btn-sm btn-outline-primary me-2">
-                 <i class="bi bi-graph-up"></i> Thống kê
-              </a>
 	          <span class="badge bg-info text-dark">
 	            ${session.records.size()} / ${classroom.participants.size()} có mặt
 	          </span>
@@ -158,7 +155,7 @@ uri="http://sargue.net/jsptags/time" %>
         <div class="card-body p-0">
           <c:if test="${empty classroom.participants}">
             <div class="text-center py-5 text-muted">
-              <i class="bi bi-people fs-1 d-block mb-3"></i>
+              <i class="bi bi-people fs-1"></i>
               Chưa có sinh viên nào trong lớp học.
             </div>
           </c:if>

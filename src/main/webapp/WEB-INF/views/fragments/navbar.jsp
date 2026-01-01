@@ -43,30 +43,24 @@
 			    <!-- User Menu -->	
 				<div class="dropdown">
 					<sec:authorize access="isAuthenticated()">
-						<a href="#" data-bs-toggle="dropdown" aria-expanded="false">
-							<div class="user-menu d-flex">
-								<div class="user-name text-end me-3 d-none d-md-block">
-									<h6 class="mb-0 text-gray-600">
-										<sec:authentication property="principal.username" />
-									</h6>
-									<p class="mb-0 text-sm text-gray-600">
-										<sec:authentication property="principal.user.email" />
-									</p>
-								</div>
-								<div class="user-img d-flex align-items-center">
-									<div class="avatar avatar-md">
-										<img src="<c:url value='/assets/compiled/jpg/1.jpg' />">
-									</div>
-								</div>
-							</div>
-						</a>
-						<ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton" style="min-width: 11rem;">
-							<li>
-								<h6 class="dropdown-header">Hello,
-									<sec:authentication property="principal.username" />!
-								</h6>
-							</li>
-							<li>
+					    <a href="#" data-bs-toggle="dropdown" aria-expanded="false">
+					        <div class="user-menu d-flex">
+					            <div class="user-name text-end me-3 d-none d-md-block">
+					                <h6 class="mb-0 text-gray-600">${displayName}</h6>
+					                <p class="mb-0 text-sm text-gray-600">${displayEmail}</p>
+					            </div>
+					            <div class="user-img d-flex align-items-center">
+					                <div class="avatar avatar-md">
+					                    <img src="${not empty displayAvatar ? displayAvatar : '/assets/compiled/jpg/1.jpg'}">
+					                </div>
+					            </div>
+					        </div>
+					    </a>
+					    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton" style="min-width: 11rem;">
+					        <li>
+					            <h6 class="dropdown-header">Xin chào, ${displayName}!</h6>
+					        </li>
+					        <li>
 								<a class="dropdown-item" href="/profile">
 									<i class="icon-mid bi bi-person me-2"></i> 
 									Hồ sơ
@@ -86,7 +80,7 @@
 									<i class="icon-mid bi bi-box-arrow-left me-2"></i> Đăng xuất
 								</a>
 							</li>
-						</ul>
+				        </ul>
 					</sec:authorize>
 					<sec:authorize access="!isAuthenticated()">
 						<div class="d-flex gap-2">

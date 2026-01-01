@@ -10,7 +10,7 @@ import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 
 @Configuration
-@PropertySource("classpath:db.properties")
+@PropertySource("classpath:application.properties")
 public class DataSourceConfig {
 	
 	@Autowired

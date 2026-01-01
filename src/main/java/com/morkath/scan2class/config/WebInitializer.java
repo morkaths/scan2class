@@ -9,11 +9,19 @@ import org.springframework.web.filter.CharacterEncodingFilter;
 
 import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatcherServletInitializer;
 
+import com.morkath.scan2class.security.config.SecurityConfig;
+
 public class WebInitializer extends AbstractAnnotationConfigDispatcherServletInitializer {
 
 	@Override
 	protected Class<?>[] getRootConfigClasses() {
-		return new Class<?>[] { AppConfig.class, DataSourceConfig.class, JpaConfig.class, JpaAuditingConfig.class };
+		return new Class<?>[] { 
+			AppConfig.class, 
+			DataSourceConfig.class, 
+			JpaConfig.class, 
+			JpaAuditingConfig.class,
+			SecurityConfig.class
+		};
 	}
 
 	@Override
@@ -25,14 +33,14 @@ public class WebInitializer extends AbstractAnnotationConfigDispatcherServletIni
 	protected String[] getServletMappings() {
 		return new String[] { "/" };
 	}
-	
+
 	@Override
-    protected Filter[] getServletFilters() {
-        CharacterEncodingFilter encodingFilter = new CharacterEncodingFilter();
-        encodingFilter.setEncoding("UTF-8");
-        encodingFilter.setForceEncoding(true);
-        return new Filter[] { encodingFilter };
-    }
+	protected Filter[] getServletFilters() {
+		CharacterEncodingFilter encodingFilter = new CharacterEncodingFilter();
+		encodingFilter.setEncoding("UTF-8");
+		encodingFilter.setForceEncoding(true);
+		return new Filter[] { encodingFilter };
+	}
 
 	@Override
 	public void onStartup(ServletContext servletContext) throws ServletException {

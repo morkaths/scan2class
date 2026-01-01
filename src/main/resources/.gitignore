@@ -3,4 +3,4 @@
 /target/
 
 # Project files
-src/main/resources/*.properties
+*.properties
