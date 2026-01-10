@@ -61,7 +61,8 @@ public class ClientSessionController extends BaseController {
     public String store(@PathVariable("classId") Long classId,
             @Valid @ModelAttribute("dto") SessionDto dto,
             BindingResult result,
-            Model model) {
+            Model model,
+            RedirectAttributes redirectAttributes) {
 
         UserEntity currentUser = userService.getCurrent();
         ClassroomEntity classroom = classroomService.getById(classId);
@@ -88,6 +89,7 @@ public class ClientSessionController extends BaseController {
         session.setLongitude(dto.getLongitude());
 
         sessionService.save(session);
+        redirectAttributes.addFlashAttribute("message", "Tạo phiên điểm danh thành công!");
 
         return "redirect:/classrooms/" + classId + "/sessions/" + session.getId() + "/qr";
     }
@@ -198,7 +200,8 @@ public class ClientSessionController extends BaseController {
             @PathVariable("sessionId") Long sessionId,
             @Valid @ModelAttribute("dto") SessionDto dto,
             BindingResult result,
-            Model model) {
+            Model model,
+            RedirectAttributes redirectAttributes) {
 
         UserEntity currentUser = userService.getCurrent();
         ClassroomEntity classroom = classroomService.getById(classId);
@@ -231,6 +234,7 @@ public class ClientSessionController extends BaseController {
         }
 
         sessionService.save(session);
+        redirectAttributes.addFlashAttribute("message", "Cập nhật phiên thành công!");
 
         return "redirect:/classrooms/" + classId;
     }

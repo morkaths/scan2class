@@ -56,8 +56,8 @@
                         <span class="text-gray-600">OR</span>
                     </div>
 
-                    <a href="${pageContext.request.contextPath}/oauth2/authorization/google" class="btn btn-lg btn-block btn-outline-dark shadow-sm d-flex align-items-center justify-content-center">
-                        <img src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg" alt="Google" style="width: 20px; height: 20px; margin-right: 10px;">
+                    <a href="${pageContext.request.contextPath}/oauth2/authorization/google" class="btn btn-lg btn-block btn-outline-primary shadow-sm d-flex align-items-center justify-content-center">
+                        <img src="${pageContext.request.contextPath}/assets/static/images/logos/google-icon-logo.svg" alt="Google" style="width: 20px; height: 20px; margin-right: 10px;" />
                         Login with Google
                     </a>
                     <div class="text-center mt-5 text-lg fs-4">

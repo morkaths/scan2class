@@ -371,21 +371,6 @@ uri="http://sargue.net/jsptags/time" %>
   </div>
 </div>
 
- <!-- Toast Container -->
- <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
-   <div id="liveToast" class="toast hide" role="alert" aria-live="assertive" aria-atomic="true">
-     <div class="toast-header">
-       <i class="bi bi-info-circle-fill me-2 text-primary"></i>
-       <strong class="me-auto">Thông báo</strong>
-       <small>Vừa xong</small>
-       <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
-     </div>
-     <div class="toast-body" id="toast-message">
-       Cập nhật thành công.
-     </div>
-   </div>
- </div>
-
  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
  <script>
@@ -430,7 +415,6 @@ uri="http://sargue.net/jsptags/time" %>
 
      $('.status-update').click(function(e) {
          e.preventDefault();
-// ... existing code ...
          var userId = $(this).data('user-id');
          var sessionId = $(this).data('session-id');
          var newStatus = $(this).data('status');
@@ -463,10 +447,14 @@ uri="http://sargue.net/jsptags/time" %>
                      btn.text(newStatus);
                      
                      // Show Toast
-                     $('#toast-message').text(response.message);
-                     var toastEl = document.getElementById('liveToast');
-                     var toast = new bootstrap.Toast(toastEl);
-                     toast.show();
+                     // Use Global Toast
+                     var toastEl = document.getElementById('globalToast');
+                     var toastBody = document.getElementById('globalToastMessage');
+                     if(toastEl && toastBody) {
+                         toastBody.innerText = response.message;
+                         var toast = new bootstrap.Toast(toastEl);
+                         toast.show();
+                     }
                      
                      // Optionally reload stats?
                  } else {

@@ -1,6 +1,16 @@
 # Build
-/build/
 /target/
+/build/
+*.class
+*.war
 
-# Project files
-src/main/resources/*.properties
+# IDE
+.settings/
+.classpath
+.project
+.idea/
+*.iml
+
+# Config
+application-local.properties
+.env

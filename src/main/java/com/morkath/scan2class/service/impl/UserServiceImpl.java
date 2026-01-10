@@ -83,7 +83,12 @@ public class UserServiceImpl extends BaseServiceImpl<UserEntity, Long> implement
 	@Override
 	public UserEntity save(UserEntity entity) {
 		if (entity.getPassword() != null) {
-			entity.setPassword(PasswordUtil.hash(entity.getPassword()));
+			// Check if password is likely already hashed (BCrypt is 60 chars, starts with
+			// $2)
+			boolean isAlreadyHashed = entity.getPassword().length() == 60 && entity.getPassword().startsWith("$2");
+			if (!isAlreadyHashed) {
+				entity.setPassword(PasswordUtil.hash(entity.getPassword()));
+			}
 		}
 		if (entity.getRoles() == null || entity.getRoles().isEmpty()) {
 			entity.addRole(roleRepository.findByCode(RoleCode.USER.name()));

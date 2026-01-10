@@ -32,7 +32,7 @@ public class BaseServiceImpl<T, ID> implements BaseService<T, ID> {
 	public T getById(ID id) {
 		return repository.findById(id).orElse(null);
 	}
-	
+
 	@Override
 	public List<T> getByIds(List<ID> ids) {
 		return repository.findAllById(ids);
@@ -71,12 +71,17 @@ public class BaseServiceImpl<T, ID> implements BaseService<T, ID> {
 	@Override
 	public boolean delete(ID id) {
 		if (repository.existsById(id)) {
-            repository.deleteById(id);
-            return true;
-        }
-        return false;
+			repository.deleteById(id);
+			return true;
+		}
+		return false;
 	}
-	
+
+	@Override
+	public long count() {
+		return repository.count();
+	}
+
 	private Field findField(Class<?> clazz, String name) {
 		Class<?> current = clazz;
 		while (current != null && current != Object.class) {

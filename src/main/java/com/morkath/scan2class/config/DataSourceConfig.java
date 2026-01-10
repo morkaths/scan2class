@@ -4,31 +4,42 @@ import javax.sql.DataSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.PropertySource;
-import org.springframework.core.env.Environment;
+
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 
 @Configuration
-@PropertySource("classpath:application.properties")
 public class DataSourceConfig {
-	
-	@Autowired
-	private Environment env;
-	
-	@Bean
+
+    @Autowired
+    private AppProperties appProperties;
+
+    @Bean
     public DataSource dataSource() {
         HikariConfig config = new HikariConfig();
-        config.setDriverClassName(env.getProperty("db.driver"));
-        config.setJdbcUrl(env.getProperty("db.url"));
-        config.setUsername(env.getProperty("db.user"));
-        config.setPassword(env.getProperty("db.password"));
+        config.setDriverClassName(appProperties.getDbDriver());
+        config.setJdbcUrl(appProperties.getDbUrl());
+        config.setUsername(appProperties.getDbUser());
+        config.setPassword(appProperties.getDbPassword());
 
-        config.setMaximumPoolSize(Integer.parseInt(env.getProperty("hikari.maximumPoolSize", "10")));
-        config.setMinimumIdle(Integer.parseInt(env.getProperty("hikari.minimumIdle", "2")));
-        config.setIdleTimeout(Long.parseLong(env.getProperty("hikari.idleTimeout", "30000")));
-        config.setConnectionTimeout(Long.parseLong(env.getProperty("hikari.connectionTimeout", "30000")));
-        config.setPoolName(env.getProperty("hikari.poolName", "HikariCP"));
+        config.setMaximumPoolSize(appProperties.getHikariMaximumPoolSize());
+        config.setMinimumIdle(appProperties.getHikariMinimumIdle());
+        config.setIdleTimeout(appProperties.getHikariIdleTimeout());
+        config.setConnectionTimeout(appProperties.getHikariConnectionTimeout());
+        config.setPoolName(appProperties.getHikariPoolName());
+        config.setMaxLifetime(appProperties.getHikariMaxLifetime());
+
+        // Cache SQL & DataSource Props
+        config.addDataSourceProperty("cachePrepStmts", appProperties.getDataSourceCachePrepStmts());
+        config.addDataSourceProperty("prepStmtCacheSize", appProperties.getDataSourcePrepStmtCacheSize());
+        config.addDataSourceProperty("prepStmtCacheSqlLimit", appProperties.getDataSourcePrepStmtCacheSqlLimit());
+        config.addDataSourceProperty("useServerPrepStmts", appProperties.getDataSourceUseServerPrepStmts());
+        config.addDataSourceProperty("useLocalSessionState", appProperties.getDataSourceUseLocalSessionState());
+        config.addDataSourceProperty("rewriteBatchedStatements", appProperties.getDataSourceRewriteBatchedStatements());
+        config.addDataSourceProperty("cacheResultSetMetadata", appProperties.getDataSourceCacheResultSetMetadata());
+        config.addDataSourceProperty("cacheServerConfiguration", appProperties.getDataSourceCacheServerConfiguration());
+        config.addDataSourceProperty("elideSetAutoCommits", appProperties.getDataSourceElideSetAutoCommits());
+        config.addDataSourceProperty("maintainTimeStats", appProperties.getDataSourceMaintainTimeStats());
 
         return new HikariDataSource(config);
     }

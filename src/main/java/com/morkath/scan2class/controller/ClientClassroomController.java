@@ -75,7 +75,8 @@ public class ClientClassroomController extends BaseController {
     }
 
     @PostMapping("/create")
-    public String doCreate(@Valid @ModelAttribute("dto") ClassroomDto dto, BindingResult result, Model model) {
+    public String doCreate(@Valid @ModelAttribute("dto") ClassroomDto dto, BindingResult result, Model model,
+            RedirectAttributes redirectAttributes) {
         logger.info("USER - Starting Create Classroom: Code={}, Name={}", dto.getCode(), dto.getName());
 
         if (dto.getCode() != null && !dto.getCode().isEmpty()) {
@@ -114,6 +115,7 @@ public class ClientClassroomController extends BaseController {
 
             classroomService.save(classroom);
             logger.info("Classroom created successfully: {}", classroom.getId());
+            redirectAttributes.addFlashAttribute("message", "Tạo lớp học thành công!");
 
         } catch (Exception e) {
             logger.error("Error saving classroom: {}", e.getMessage(), e);
@@ -230,7 +232,8 @@ public class ClientClassroomController extends BaseController {
     }
 
     @PostMapping("/edit")
-    public String doEdit(@Valid @ModelAttribute("dto") ClassroomDto dto, BindingResult result, Model model) {
+    public String doEdit(@Valid @ModelAttribute("dto") ClassroomDto dto, BindingResult result, Model model,
+            RedirectAttributes redirectAttributes) {
         if (result.hasErrors()) {
             model.addAttribute("dto", dto);
             preparePage(model, "pages/classroom/edit", "Chỉnh sửa lớp học");
@@ -249,16 +252,20 @@ public class ClientClassroomController extends BaseController {
         classroom.setStatus(dto.getStatus());
         // Owner remains same
         classroomService.save(classroom);
+        redirectAttributes.addFlashAttribute("message", "Cập nhật lớp học thành công!");
         return "redirect:/classrooms/" + classroom.getId();
     }
 
     @PostMapping("/delete/{id}")
-    public String delete(@PathVariable("id") Long id) {
+    public String delete(@PathVariable("id") Long id, RedirectAttributes redirectAttributes) {
         ClassroomEntity classroom = classroomService.getById(id);
         UserEntity currentUser = userService.getCurrent();
 
         if (classroom != null && classroom.getOwner().getId().equals(currentUser.getId())) {
             classroomService.delete(id);
+            redirectAttributes.addFlashAttribute("message", "Xóa lớp học thành công!");
+        } else {
+            redirectAttributes.addFlashAttribute("errorMessage", "Bạn không có quyền xóa lớp học này.");
         }
         return "redirect:/classrooms";
     }

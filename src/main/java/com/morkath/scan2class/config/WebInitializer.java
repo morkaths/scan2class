@@ -15,12 +15,12 @@ public class WebInitializer extends AbstractAnnotationConfigDispatcherServletIni
 
 	@Override
 	protected Class<?>[] getRootConfigClasses() {
-		return new Class<?>[] { 
-			AppConfig.class, 
-			DataSourceConfig.class, 
-			JpaConfig.class, 
-			JpaAuditingConfig.class,
-			SecurityConfig.class
+		return new Class<?>[] {
+				AppConfig.class,
+				DataSourceConfig.class,
+				JpaConfig.class,
+				JpaAuditingConfig.class,
+				SecurityConfig.class
 		};
 	}
 
@@ -42,11 +42,4 @@ public class WebInitializer extends AbstractAnnotationConfigDispatcherServletIni
 		return new Filter[] { encodingFilter };
 	}
 
-	@Override
-	public void onStartup(ServletContext servletContext) throws ServletException {
-		FilterRegistration.Dynamic encodingFilter = servletContext.addFilter("encoding-filter",
-				new CharacterEncodingFilter("UTF-8", true));
-		encodingFilter.addMappingForUrlPatterns(null, false, "/*");
-		super.onStartup(servletContext);
-	}
 }

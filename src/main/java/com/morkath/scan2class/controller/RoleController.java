@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.morkath.scan2class.core.BaseController;
 import com.morkath.scan2class.dto.AssetDto;
@@ -24,13 +25,13 @@ import com.morkath.scan2class.service.RoleService;
 @Controller
 @RequestMapping("/admin/roles")
 public class RoleController extends BaseController {
-	
+
 	@Autowired
 	private RoleService roleService;
-	
+
 	@Autowired
 	private PermissionService permissionService;
-	
+
 	@GetMapping
 	public String index(Model model) {
 		model.addAttribute("roles", roleService.getAll());
@@ -42,7 +43,7 @@ public class RoleController extends BaseController {
 		preparePage(model, "pages/admin/role/index", assets);
 		return "layouts/vertical";
 	}
-	
+
 	@GetMapping("/create")
 	public String create(Model model) {
 		model.addAttribute("dto", new RoleDto());
@@ -50,10 +51,11 @@ public class RoleController extends BaseController {
 		preparePage(model, "pages/admin/role/create", "Create New Role");
 		return "layouts/vertical";
 	}
-	
+
 	@PostMapping("/create")
 	public String doCreate(
-			@Valid @ModelAttribute("dto") RoleDto dto, BindingResult result, Model model) {
+			@Valid @ModelAttribute("dto") RoleDto dto, BindingResult result, Model model,
+			RedirectAttributes redirectAttributes) {
 		if (result.hasErrors()) {
 			model.addAttribute("dto", dto);
 			model.addAttribute("permissions", permissionService.getAll());
@@ -67,9 +69,10 @@ public class RoleController extends BaseController {
 		role.setCode(dto.getCode());
 		role.setPermissions(new HashSet<>(permissionService.getByIds(dto.getPermissionIds())));
 		roleService.save(role);
+		redirectAttributes.addFlashAttribute("message", "Tạo vai trò thành công!");
 		return "redirect:/admin/roles";
 	}
-	
+
 	@GetMapping("/edit/{id}")
 	public String edit(@PathVariable("id") Long id, Model model) {
 		model.addAttribute("dto", roleService.getById(id));
@@ -77,9 +80,10 @@ public class RoleController extends BaseController {
 		preparePage(model, "pages/admin/role/edit", "Edit Role");
 		return "layouts/vertical";
 	}
-	
+
 	@PostMapping("/edit")
-	public String doEdit(@Valid @ModelAttribute("dto") RoleDto dto, BindingResult result, Model model) {
+	public String doEdit(@Valid @ModelAttribute("dto") RoleDto dto, BindingResult result, Model model,
+			RedirectAttributes redirectAttributes) {
 		if (result.hasErrors()) {
 			model.addAttribute("dto", dto);
 			model.addAttribute("permissions", permissionService.getAll());
@@ -92,12 +96,14 @@ public class RoleController extends BaseController {
 		role.setCode(dto.getCode());
 		role.setPermissions(new HashSet<>(permissionService.getByIds(dto.getPermissionIds())));
 		roleService.save(role);
+		redirectAttributes.addFlashAttribute("message", "Cập nhật thành công!");
 		return "redirect:/admin/roles";
 	}
-	
+
 	@PostMapping("/delete/{id}")
-	public String delete(@PathVariable("id") Long id) {
+	public String delete(@PathVariable("id") Long id, RedirectAttributes redirectAttributes) {
 		roleService.delete(id);
+		redirectAttributes.addFlashAttribute("message", "Xóa thành công!");
 		return "redirect:/admin/roles";
 	}
 }

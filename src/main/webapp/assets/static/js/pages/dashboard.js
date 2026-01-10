@@ -134,34 +134,44 @@ let optionsIndonesia = {
   colors: ["#dc3545"],
 }
 
-var chartProfileVisit = new ApexCharts(
-  document.querySelector("#chart-profile-visit"),
-  optionsProfileVisit
-)
-var chartVisitorsProfile = new ApexCharts(
-  document.getElementById("chart-visitors-profile"),
-  optionsVisitorsProfile
-)
-var chartEurope = new ApexCharts(
-  document.querySelector("#chart-europe"),
-  optionsEurope
-)
-var chartAmerica = new ApexCharts(
-  document.querySelector("#chart-america"),
-  optionsAmerica
-)
-var chartIndia = new ApexCharts(
-  document.querySelector("#chart-india"),
-  optionsIndia
-)
-var chartIndonesia = new ApexCharts(
-  document.querySelector("#chart-indonesia"),
-  optionsIndonesia
-)
+var elementProfileVisit = document.querySelector("#chart-profile-visit")
+if (elementProfileVisit) {
+  var chartProfileVisit = new ApexCharts(
+    elementProfileVisit,
+    optionsProfileVisit
+  )
+  chartProfileVisit.render()
+}
 
-chartIndonesia.render()
-chartAmerica.render()
-chartIndia.render()
-chartEurope.render()
-chartProfileVisit.render()
-chartVisitorsProfile.render()
+var elementVisitorsProfile = document.getElementById("chart-visitors-profile")
+if (elementVisitorsProfile) {
+  var chartVisitorsProfile = new ApexCharts(
+    elementVisitorsProfile,
+    optionsVisitorsProfile
+  )
+  chartVisitorsProfile.render()
+}
+
+var elementEurope = document.querySelector("#chart-europe")
+if (elementEurope) {
+  var chartEurope = new ApexCharts(elementEurope, optionsEurope)
+  chartEurope.render()
+}
+
+var elementAmerica = document.querySelector("#chart-america")
+if (elementAmerica) {
+  var chartAmerica = new ApexCharts(elementAmerica, optionsAmerica)
+  chartAmerica.render()
+}
+
+var elementIndia = document.querySelector("#chart-india")
+if (elementIndia) {
+  var chartIndia = new ApexCharts(elementIndia, optionsIndia)
+  chartIndia.render()
+}
+
+var elementIndonesia = document.querySelector("#chart-indonesia")
+if (elementIndonesia) {
+  var chartIndonesia = new ApexCharts(elementIndonesia, optionsIndonesia)
+  chartIndonesia.render()
+}

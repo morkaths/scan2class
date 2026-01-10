@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.morkath.scan2class.core.BaseController;
 import com.morkath.scan2class.dto.AssetDto;
@@ -50,7 +51,8 @@ public class ClassroomController extends BaseController {
     }
 
     @PostMapping("/create")
-    public String doCreate(@Valid @ModelAttribute("dto") ClassroomDto dto, BindingResult result, Model model) {
+    public String doCreate(@Valid @ModelAttribute("dto") ClassroomDto dto, BindingResult result, Model model,
+            RedirectAttributes redirectAttributes) {
         if (result.hasErrors()) {
             model.addAttribute("dto", dto);
             model.addAttribute("users", userService.getAll());
@@ -86,6 +88,7 @@ public class ClassroomController extends BaseController {
         classroom.setOwner(owner);
 
         classroomService.save(classroom);
+        redirectAttributes.addFlashAttribute("message", "Tạo lớp học thành công!");
         return "redirect:/admin/classrooms";
     }
 
@@ -108,7 +111,8 @@ public class ClassroomController extends BaseController {
     }
 
     @PostMapping("/edit")
-    public String doEdit(@Valid @ModelAttribute("dto") ClassroomDto dto, BindingResult result, Model model) {
+    public String doEdit(@Valid @ModelAttribute("dto") ClassroomDto dto, BindingResult result, Model model,
+            RedirectAttributes redirectAttributes) {
         if (result.hasErrors()) {
             model.addAttribute("dto", dto);
             model.addAttribute("users", userService.getAll());
@@ -126,12 +130,14 @@ public class ClassroomController extends BaseController {
         classroom.setStatus(dto.getStatus());
         classroom.setOwner(userService.getById(dto.getOwnerId()));
         classroomService.save(classroom);
+        redirectAttributes.addFlashAttribute("message", "Cập nhật thành công!");
         return "redirect:/admin/classrooms";
     }
 
     @PostMapping("/delete/{id}")
-    public String delete(@PathVariable("id") Long id) {
+    public String delete(@PathVariable("id") Long id, RedirectAttributes redirectAttributes) {
         classroomService.delete(id);
+        redirectAttributes.addFlashAttribute("message", "Xóa thành công!");
         return "redirect:/admin/classrooms";
     }
 }
