@@ -1,13 +1,14 @@
 package com.morkath.scan2class.security.service;
 
-import java.util.Collections;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth2.client.oidc.userinfo.OidcUserRequest;
@@ -16,10 +17,12 @@ import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.oidc.user.DefaultOidcUser;
 import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 
+import com.morkath.scan2class.entity.auth.RoleEntity;
 import com.morkath.scan2class.entity.auth.UserEntity;
 import com.morkath.scan2class.repository.auth.UserRepository;
 import com.morkath.scan2class.service.AuthService;
 
+@Service
 public class CustomOAuth2UserService extends OidcUserService {
 
     private final UserRepository userRepository;
@@ -47,7 +50,8 @@ public class CustomOAuth2UserService extends OidcUserService {
         return processOidcUser(registrationId, oidcUser);
     }
 
-    private OidcUser processOidcUser(String registrationId, OidcUser oidcUser) {
+    @Transactional
+    public OidcUser processOidcUser(String registrationId, OidcUser oidcUser) {
         Map<String, Object> attributes = oidcUser.getAttributes();
         String email = (String) attributes.get("email");
         String name = (String) attributes.get("name");
@@ -70,15 +74,23 @@ public class CustomOAuth2UserService extends OidcUserService {
             }
 
             logger.debug("Gán quyền cho User {}: {}", email, user.getRoles());
-            Set<GrantedAuthority> authorities = user.getRoles().stream()
-                    .map(role -> new SimpleGrantedAuthority(role.getCode()))
-                    .collect(Collectors.toSet());
+            Set<GrantedAuthority> authorities = new HashSet<>();
 
-            if (authorities.isEmpty()) {
-                authorities = Collections.singleton(new SimpleGrantedAuthority("ROLE_USER"));
+            for (RoleEntity role : user.getRoles()) {
+                authorities.add(new SimpleGrantedAuthority("ROLE_" + role.getCode()));
+                role.getPermissions().forEach(permission -> {
+                    authorities.add(new SimpleGrantedAuthority(permission.getCode()));
+                });
             }
 
+            if (authorities.isEmpty()) {
+                authorities.add(new SimpleGrantedAuthority("ROLE_USER"));
+            }
+
+            logger.info("FINAL AUTHORITIES FOR {}: {}", email, authorities);
+
             // Return DefaultOidcUser which implements OidcUser interface
+            // We must keep the original attributes from the provider
             return new DefaultOidcUser(authorities, oidcUser.getIdToken(), oidcUser.getUserInfo());
 
         } catch (Exception ex) {

@@ -20,11 +20,11 @@ import org.springframework.security.oauth2.client.registration.InMemoryClientReg
 import org.springframework.security.oauth2.core.AuthorizationGrantType;
 import org.springframework.security.oauth2.core.oidc.IdTokenClaimNames;
 
+import org.springframework.security.oauth2.client.userinfo.OAuth2UserService;
+import org.springframework.security.oauth2.client.oidc.userinfo.OidcUserRequest;
+import org.springframework.security.oauth2.core.oidc.user.OidcUser;
+
 import com.morkath.scan2class.constant.auth.RoleCode;
-import com.morkath.scan2class.repository.auth.RoleRepository;
-import com.morkath.scan2class.repository.auth.UserRepository;
-import com.morkath.scan2class.service.AuthService;
-import com.morkath.scan2class.security.service.CustomOAuth2UserService;
 
 @Configuration
 @EnableWebSecurity
@@ -33,13 +33,7 @@ import com.morkath.scan2class.security.service.CustomOAuth2UserService;
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
 	@Autowired
-	private UserRepository userRepository;
-
-	@Autowired
-	private RoleRepository roleRepository;
-
-	@Autowired
-	private AuthService authService;
+	private OAuth2UserService<OidcUserRequest, OidcUser> customOAuth2UserService;
 
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
@@ -60,7 +54,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 						.loginPage("/auth/login")
 						.defaultSuccessUrl("/", true)
 						.userInfoEndpoint(userInfo -> userInfo
-								.oidcUserService(new CustomOAuth2UserService(userRepository, authService))))
+								.oidcUserService(customOAuth2UserService)))
 				.logout(logout -> logout
 						.logoutUrl("/auth/logout")
 						.logoutSuccessUrl("/auth/login?logout")

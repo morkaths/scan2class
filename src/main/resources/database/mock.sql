@@ -1,4 +1,25 @@
 USE scan2class;
+
+CREATE TABLE IF NOT EXISTS permissions (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    code VARCHAR(255) NOT NULL UNIQUE,
+    name VARCHAR(255) NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS roles (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    code VARCHAR(255) NOT NULL UNIQUE,
+    name VARCHAR(255) NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS roles_permissions (
+    role_id BIGINT NOT NULL,
+    permission_id BIGINT NOT NULL,
+    PRIMARY KEY (role_id, permission_id),
+    FOREIGN KEY (role_id) REFERENCES roles(id),
+    FOREIGN KEY (permission_id) REFERENCES permissions(id)
+);
+
 -- Bảng permission
 INSERT INTO permissions (code, name) VALUES
 ('user:view', 'View Users'),

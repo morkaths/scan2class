@@ -2,43 +2,29 @@
 <Configuration status="WARN">
     <Properties>
         <Property name="LOG_PATTERN">%highlight{%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n}{FATAL=red blink, ERROR=red, WARN=yellow, INFO=green, DEBUG=blue, TRACE=cyan}</Property>
-        <Property name="FILE_LOG_PATTERN">%d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n</Property>
     </Properties>
     <Appenders>
         <Console name="Console" target="SYSTEM_OUT">
             <PatternLayout pattern="${LOG_PATTERN}"/>
         </Console>
-        
-        <RollingFile name="File" fileName="logs/app.log" filePattern="logs/app-%d{yyyy-MM-dd}-%i.log.gz">
-            <PatternLayout pattern="${FILE_LOG_PATTERN}"/>
-            <Policies>
-                <TimeBasedTriggeringPolicy />
-                <SizeBasedTriggeringPolicy size="10 MB"/>
-            </Policies>
-            <DefaultRolloverStrategy max="10"/>
-        </RollingFile>
     </Appenders>
     <Loggers>
         <!-- Framework Loggers -->
         <Logger name="org.springframework" level="info" additivity="false">
             <AppenderRef ref="Console"/>
-            <AppenderRef ref="File"/>
         </Logger>
         
         <Logger name="org.hibernate" level="warn" additivity="false">
             <AppenderRef ref="Console"/>
-            <AppenderRef ref="File"/>
         </Logger>
 
         <!-- Application Loggers -->
         <Logger name="com.morkath.scan2class" level="debug" additivity="false">
             <AppenderRef ref="Console"/>
-            <AppenderRef ref="File"/>
         </Logger>
         
-        <Root level="warn">
+        <Root level="info">
             <AppenderRef ref="Console"/>
-            <AppenderRef ref="File"/>
         </Root>
     </Loggers>
 </Configuration>

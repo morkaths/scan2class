@@ -68,7 +68,7 @@
 							</li>
 							<li>
 								<a class="dropdown-item" href="<c:url value='/classrooms' />">
-									<i class="icon-mid bi bi-gear me-2"></i>
+									<i class="icon-mid bi bi-door-closed me-2"></i>
 									Lớp học
 								</a>
 							</li>
@@ -107,7 +107,7 @@
 				</li>
 				<li class="menu-item  has-sub">
 					<a href="#" class='menu-link'>
-						<span><i class="bi bi-stack"></i> Lớp học</span>
+						<span><i class="bi bi-door-closed-fill"></i> Lớp học</span>
 					</a>
 					<div class="submenu ">
 						<div class="submenu-group-wrapper">
@@ -117,9 +117,6 @@
 								</li>
 								<li class="submenu-item  ">
 									<a href="<c:url value='/classrooms' />" class='submenu-link'>Danh sách lớp học</a>
-								</li>
-								<li class="submenu-item  ">
-									<a href="/classrooms/statistic" class='submenu-link'>Thống kê lớp học</a>
 								</li>
 							</ul>
 						</div>
