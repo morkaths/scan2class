@@ -11,6 +11,9 @@ FROM tomcat:9.0-jdk17-corretto
 RUN rm -rf /usr/local/tomcat/webapps/*
 # Disable Tomcat shutdown port to prevent "Invalid shutdown command" logs
 RUN sed -i 's/port="8005"/port="-1"/g' /usr/local/tomcat/conf/server.xml
+
+# Enable RemoteIpValve to handle X-Forwarded-Proto headers from Render (fixes HTTPS redirect)
+RUN sed -i 's|</Host>|<Valve className="org.apache.catalina.valves.RemoteIpValve" internalProxies=".*" remoteIpHeader="x-forwarded-for" requestAttributesEnabled="true" protocolHeader="x-forwarded-proto" protocolHeaderHttpsValue="https"/>\n      </Host>|' /usr/local/tomcat/conf/server.xml
 # Copy WAR file from build stage to Tomcat webapps directory as ROOT.war
 COPY --from=build /app/target/*.war /usr/local/tomcat/webapps/ROOT.war
 
