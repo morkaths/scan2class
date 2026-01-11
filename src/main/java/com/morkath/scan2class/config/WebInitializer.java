@@ -1,11 +1,9 @@
 package com.morkath.scan2class.config;
 
 import javax.servlet.Filter;
-import javax.servlet.FilterRegistration;
-import javax.servlet.ServletContext;
-import javax.servlet.ServletException;
 
 import org.springframework.web.filter.CharacterEncodingFilter;
+import org.springframework.web.filter.ForwardedHeaderFilter;
 
 import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatcherServletInitializer;
 
@@ -39,7 +37,9 @@ public class WebInitializer extends AbstractAnnotationConfigDispatcherServletIni
 		CharacterEncodingFilter encodingFilter = new CharacterEncodingFilter();
 		encodingFilter.setEncoding("UTF-8");
 		encodingFilter.setForceEncoding(true);
-		return new Filter[] { encodingFilter };
+
+		ForwardedHeaderFilter forwardedHeaderFilter = new ForwardedHeaderFilter();
+		return new Filter[] { encodingFilter, forwardedHeaderFilter };
 	}
 
 }
