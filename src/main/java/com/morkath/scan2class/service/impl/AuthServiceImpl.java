@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.morkath.scan2class.constant.auth.RoleCode;
+import com.morkath.scan2class.entity.auth.RoleEntity;
 import com.morkath.scan2class.entity.auth.UserEntity;
 import com.morkath.scan2class.repository.auth.RoleRepository;
 import com.morkath.scan2class.repository.auth.UserRepository;
@@ -15,10 +16,10 @@ import com.morkath.scan2class.util.PasswordUtil;
 @Service
 @Transactional
 public class AuthServiceImpl implements AuthService {
-	
+
 	@Autowired
 	private UserRepository userRepository;
-	
+
 	@Autowired
 	private RoleRepository roleRepository;
 
@@ -28,8 +29,16 @@ public class AuthServiceImpl implements AuthService {
 			return false;
 		}
 		UserEntity user = new UserEntity(username, PasswordUtil.hash(password), email);
-		user.addRole(roleRepository.findByCode(RoleCode.USER.name()));
+
+		// Fallback: Create ROLE_USER if not exists
+		RoleEntity role = roleRepository.findByCode(RoleCode.USER.name());
+		if (role == null) {
+			role = new RoleEntity(RoleCode.USER.name(), "Regular User");
+			role = roleRepository.save(role);
+		}
+
+		user.addRole(role);
 		return userRepository.save(user) != null;
 	}
-	
+
 }

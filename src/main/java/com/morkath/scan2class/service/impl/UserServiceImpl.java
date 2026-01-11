@@ -1,5 +1,7 @@
 package com.morkath.scan2class.service.impl;
 
+import javax.transaction.Transactional;
+
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.security.oauth2.core.oidc.user.OidcUser;
@@ -81,6 +83,7 @@ public class UserServiceImpl extends BaseServiceImpl<UserEntity, Long> implement
 	}
 
 	@Override
+	@Transactional
 	public UserEntity save(UserEntity entity) {
 		if (entity.getPassword() != null) {
 			// Check if password is likely already hashed (BCrypt is 60 chars, starts with
