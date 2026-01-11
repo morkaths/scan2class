@@ -16,14 +16,17 @@ public class ClassroomServiceImpl extends BaseServiceImpl<ClassroomEntity, Long>
     private final ClassroomRepository classroomRepository;
     private final AttendanceRecordRepository attendanceRecordRepository;
     private final UserRepository userRepository;
+    private final com.morkath.scan2class.repository.classroom.ClassParticipantRepository classParticipantRepository;
 
     public ClassroomServiceImpl(ClassroomRepository classroomRepository,
             AttendanceRecordRepository attendanceRecordRepository,
-            UserRepository userRepository) {
+            UserRepository userRepository,
+            com.morkath.scan2class.repository.classroom.ClassParticipantRepository classParticipantRepository) {
         super(classroomRepository);
         this.classroomRepository = classroomRepository;
         this.attendanceRecordRepository = attendanceRecordRepository;
         this.userRepository = userRepository;
+        this.classParticipantRepository = classParticipantRepository;
     }
 
     @Override
@@ -34,6 +37,13 @@ public class ClassroomServiceImpl extends BaseServiceImpl<ClassroomEntity, Long>
     @Override
     public java.util.List<ClassroomEntity> getByOwner(UserEntity owner) {
         return classroomRepository.findByOwner(owner);
+    }
+
+    @Override
+    public java.util.List<ClassroomEntity> getJoinedClasses(UserEntity user) {
+        return classParticipantRepository.findByUser(user).stream()
+                .map(p -> p.getClassroom())
+                .collect(java.util.stream.Collectors.toList());
     }
 
     @Override

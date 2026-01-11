@@ -143,7 +143,7 @@ public class AttendanceServiceImpl extends BaseServiceImpl<AttendanceRecordEntit
     }
 
     @Override
-    public ClassroomStatsDTO getClassroomStatistics(Long classroomId)  {
+    public ClassroomStatsDTO getClassroomStatistics(Long classroomId) {
         ClassroomStatsDTO stats = new ClassroomStatsDTO();
         stats.setClassroomId(classroomId);
 
@@ -155,13 +155,13 @@ public class AttendanceServiceImpl extends BaseServiceImpl<AttendanceRecordEntit
 
         for (Object[] row : rawStats) {
             StudentStatDTO dto = new StudentStatDTO();
-            dto.setUserId(((Number) row[0]).longValue());
+            dto.setUserId(safeLong(row[0]));
             dto.setUsername((String) row[1]);
             dto.setFullName((String) row[2]);
 
             // Safe casting for counts
-            int present = ((Number) row[3]).intValue();
-            int late = ((Number) row[4]).intValue();
+            int present = safeInt(row[3]);
+            int late = safeInt(row[4]);
 
             dto.setPresentCount(present);
             dto.setLateCount(late);
@@ -194,6 +194,25 @@ public class AttendanceServiceImpl extends BaseServiceImpl<AttendanceRecordEntit
         stats.setOverallDidAttend(overall);
 
         return stats;
+    }
+
+    // Helper methods for safe casting from Native Query
+    private Long safeLong(Object o) {
+        if (o == null)
+            return null;
+        if (o instanceof Number) {
+            return ((Number) o).longValue();
+        }
+        return null;
+    }
+
+    private int safeInt(Object o) {
+        if (o == null)
+            return 0;
+        if (o instanceof Number) {
+            return ((Number) o).intValue();
+        }
+        return 0;
     }
 
     @Override

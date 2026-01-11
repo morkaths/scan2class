@@ -10,5 +10,7 @@ public interface ClassroomService extends BaseService<ClassroomEntity, Long> {
 
     java.util.List<ClassroomEntity> getByOwner(UserEntity owner);
 
+    java.util.List<ClassroomEntity> getJoinedClasses(UserEntity user);
+
     void removeStudentFromClass(Long userId, Long classroomId);
 }

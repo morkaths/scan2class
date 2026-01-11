@@ -29,9 +29,11 @@
 					                        <div class="d-flex flex-wrap align-items-center mb-2">
 					                        	<span class="badge bg-primary me-1">${classroom.code}</span>
 					                            <h2 class="mb-0 fw-bold me-2 fs-4 fs-md-2">${classroom.name}</h2>
-					                            <a href="<c:url value='/classrooms/edit/${classroom.id}' />">
-						                            <i class="bi bi-pencil"></i>
-						                        </a>
+					                            <c:if test="${isOwner}">
+						                            <a href="<c:url value='/classrooms/edit/${classroom.id}' />">
+							                            <i class="bi bi-pencil"></i>
+							                        </a>
+						                        </c:if>
 					                        </div>
 					                        <div class="text-muted mb-2 small">
 					                            <i class="bi bi-geo-alt me-1"></i>Phòng: ${classroom.room}
@@ -47,15 +49,17 @@
 					                            <i class="bi bi-graph-up me-2"></i>Thống kê
 					                        </a>
 					                        
-					                        <button type="button" class="btn btn-info text-white w-100 w-sm-auto" 
-					                                data-bs-toggle="modal" data-bs-target="#joinQrModal">
-					                            <i class="bi bi-qr-code me-2"></i>Mã mời
-					                        </button>
-					                        
-					                        <a href="<c:url value='/classrooms/${classroom.id}/sessions/create' />"
-					                           class="btn btn-primary w-100 w-sm-auto">
-					                            <i class="bi bi-plus-circle me-2"></i>Tạo phiên
-					                        </a>
+					                        <c:if test="${isOwner}">
+						                        <button type="button" class="btn btn-info text-white w-100 w-sm-auto" 
+						                                data-bs-toggle="modal" data-bs-target="#joinQrModal">
+						                            <i class="bi bi-qr-code me-2"></i>Mã mời
+						                        </button>
+						                        
+						                        <a href="<c:url value='/classrooms/${classroom.id}/sessions/create' />"
+						                           class="btn btn-primary w-100 w-sm-auto">
+						                            <i class="bi bi-plus-circle me-2"></i>Tạo phiên
+						                        </a>
+					                        </c:if>
 					                    </div>
 					
 					                </div>
@@ -131,6 +135,7 @@
                                                                             </span>
                                                                         </td>
                                                                         <td class="text-end pe-4">
+                                                                            <c:if test="${isOwner}">
                                                                             <div class="dropdown"
                                                                                 style="position: static;">
                                                                                 <button
@@ -183,6 +188,7 @@
                                                                                     </li>
                                                                                 </ul>
                                                                             </div>
+                                                                            </c:if>
                                                                         </td>
                                                                     </tr>
                                                                 </c:forEach>
@@ -241,6 +247,7 @@
                                                                                 pattern="dd/MM/yyyy HH:mm" />
                                                                         </td>
                                                                         <td class="text-end pe-4">
+                                                                            <c:if test="${isOwner}">
                                                                             <form
                                                                                 action="${pageContext.request.contextPath}/classrooms/${classroom.id}/participants/${participant.user.id}/remove"
                                                                                 method="post" style="display: inline;"
@@ -256,6 +263,7 @@
                                                                                     <i class="bi bi-trash"></i>
                                                                                 </button>
                                                                             </form>
+                                                                            </c:if>
                                                                         </td>
                                                                     </tr>
                                                                 </c:forEach>

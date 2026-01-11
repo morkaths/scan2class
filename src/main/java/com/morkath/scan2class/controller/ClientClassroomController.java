@@ -48,7 +48,11 @@ public class ClientClassroomController extends BaseController {
     @GetMapping
     public String index(Model model) {
         UserEntity currentUser = userService.getCurrent();
-        List<ClassroomDto> dtos = classroomService.getByOwner(currentUser).stream().map(classroom -> {
+        java.util.Set<ClassroomEntity> classroomSet = new java.util.HashSet<>();
+        classroomSet.addAll(classroomService.getByOwner(currentUser));
+        classroomSet.addAll(classroomService.getJoinedClasses(currentUser));
+
+        List<ClassroomDto> dtos = classroomSet.stream().map(classroom -> {
             ClassroomDto dto = new ClassroomDto();
             dto.setId(classroom.getId());
             dto.setCode(classroom.getCode());
@@ -56,7 +60,8 @@ public class ClientClassroomController extends BaseController {
             dto.setRoom(classroom.getRoom());
             dto.setStatus(classroom.getStatus());
             return dto;
-        }).collect(Collectors.toList());
+        }).sorted((c1, c2) -> c2.getId().compareTo(c1.getId())) // Sort by ID desc
+                .collect(Collectors.toList());
 
         model.addAttribute("classrooms", dtos);
         AssetDto assets = new AssetDto("My Classrooms");
@@ -134,13 +139,23 @@ public class ClientClassroomController extends BaseController {
         ClassroomEntity classroom = classroomService.getById(id);
         UserEntity currentUser = userService.getCurrent();
 
-        if (classroom == null || !classroom.getOwner().getId().equals(currentUser.getId())) {
+        if (classroom == null) {
+            return "redirect:/classrooms";
+        }
+
+        boolean isOwner = classroom.getOwner().getId().equals(currentUser.getId());
+        boolean isParticipant = classroom.getParticipants().stream()
+                .anyMatch(p -> p.getUser().getId().equals(currentUser.getId()));
+
+        if (!isOwner && !isParticipant) {
             return "redirect:/classrooms";
         }
 
         // Initialize lazy collections
         classroom.getSessions().size();
         classroom.getParticipants().size();
+
+        model.addAttribute("isOwner", isOwner);
 
         model.addAttribute("classroom", classroom);
         model.addAttribute("joinCode", HashUtils.encodeId(classroom.getId()));
