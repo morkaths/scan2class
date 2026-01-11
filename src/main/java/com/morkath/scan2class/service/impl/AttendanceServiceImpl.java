@@ -20,8 +20,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 
 import com.morkath.scan2class.core.BaseServiceImpl;
+import com.morkath.scan2class.dto.AttendanceUpdateDto;
 import com.morkath.scan2class.dto.ClassroomStatsDTO;
 import com.morkath.scan2class.dto.SessionStatsDTO;
 import com.morkath.scan2class.dto.StudentStatDTO;
@@ -43,6 +45,7 @@ public class AttendanceServiceImpl extends BaseServiceImpl<AttendanceRecordEntit
     private final AttendanceRecordRepository attendanceRecordRepository;
     private final com.morkath.scan2class.repository.auth.UserRepository userRepository;
     private final ClassParticipantRepository classParticipantRepository;
+    private final SimpMessagingTemplate messagingTemplate;
 
     @Value("${demo.mode.skip-location:false}")
     private boolean skipLocationCheck;
@@ -51,12 +54,14 @@ public class AttendanceServiceImpl extends BaseServiceImpl<AttendanceRecordEntit
     public AttendanceServiceImpl(AttendanceRecordRepository attendanceRecordRepository,
             SessionRepository sessionRepository,
             com.morkath.scan2class.repository.auth.UserRepository userRepository,
-            ClassParticipantRepository classParticipantRepository) {
+            ClassParticipantRepository classParticipantRepository,
+            SimpMessagingTemplate messagingTemplate) {
         super(attendanceRecordRepository);
         this.attendanceRecordRepository = attendanceRecordRepository;
         this.sessionRepository = sessionRepository;
         this.userRepository = userRepository;
         this.classParticipantRepository = classParticipantRepository;
+        this.messagingTemplate = messagingTemplate;
     }
 
     @Override
@@ -121,6 +126,11 @@ public class AttendanceServiceImpl extends BaseServiceImpl<AttendanceRecordEntit
         record.setDeviceUid("BROWSER");
         record.setStatus("PRESENT");
         save(record);
+
+        // Broadcast update
+        messagingTemplate.convertAndSend("/topic/sessions/" + session.getId() + "/attendance",
+                new AttendanceUpdateDto(session.getId(), user.getId(), user.getUsername(), user.getFullname(),
+                        record.getCheckin(), record.getStatus(), record.getDeviceInfo()));
     }
 
     @Override
@@ -148,6 +158,13 @@ public class AttendanceServiceImpl extends BaseServiceImpl<AttendanceRecordEntit
 
         record.setStatus(status);
         save(record);
+
+        // Broadcast update
+        UserEntity student = record.getUser();
+        messagingTemplate.convertAndSend("/topic/sessions/" + sessionId + "/attendance",
+                new AttendanceUpdateDto(sessionId, student.getId(), student.getUsername(),
+                        student.getFullname(), record.getCheckin(), record.getStatus(),
+                        record.getDeviceInfo()));
     }
 
     @Override

@@ -146,6 +146,17 @@
             <version>${spring.security.version}</version>
         </dependency>
 
+        <!-- ===== WebSocket ===== -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-websocket</artifactId>
+        </dependency>
+        
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-messaging</artifactId>
+        </dependency>
+
         <!-- ===== Database & ORM ===== -->
         <dependency>
             <groupId>com.zaxxer</groupId>

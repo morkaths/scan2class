@@ -1,8 +1,7 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8"
-pageEncoding="UTF-8" %> <%@ taglib prefix="c"
-uri="http://java.sun.com/jsp/jstl/core" %> <%@ taglib prefix="fmt"
-uri="http://java.sun.com/jsp/jstl/fmt" %> <%@ taglib prefix="javatime"
-uri="http://sargue.net/jsptags/time" %>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %> 
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %> 
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %> 
+<%@ taglib prefix="javatime" uri="http://sargue.net/jsptags/time" %>
 
 <div class="container py-5">
   <!-- Flash Messages -->
@@ -182,7 +181,7 @@ uri="http://sargue.net/jsptags/time" %>
                       value="${session.attendanceMap[participant.user.id]}"
                     />
 
-                    <tr>
+                    <tr id="tr-${participant.user.id}">
                       <td class="fw-bold">${participant.user.username}</td>
                       <td>
                         <c:choose>
@@ -365,6 +364,8 @@ uri="http://sargue.net/jsptags/time" %>
 
  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+ <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.6.1/sockjs.min.js"></script>
+ <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
  <script>
  $(document).ready(function() {
      // Fetch Session Stats
@@ -375,7 +376,7 @@ uri="http://sargue.net/jsptags/time" %>
        success: function(data) {
            const ctx = document.getElementById('sessionChart').getContext('2d');
            // data: { presentCount, lateCount, absentCount, totalStudents ... }
-           new Chart(ctx, {
+           window.mySessionChart = new Chart(ctx, {
                type: 'pie',
                data: {
                    labels: ['Có mặt', 'Đi muộn', 'Vắng'],
@@ -439,7 +440,6 @@ uri="http://sargue.net/jsptags/time" %>
                      btn.text(newStatus);
                      
                      // Show Toast
-                     // Use Global Toast
                      var toastEl = document.getElementById('globalToast');
                      var toastBody = document.getElementById('globalToastMessage');
                      if(toastEl && toastBody) {
@@ -448,7 +448,8 @@ uri="http://sargue.net/jsptags/time" %>
                          toast.show();
                      }
                      
-                     // Optionally reload stats?
+                     // Reload Stats
+                     loadSessionStats();
                  } else {
                      alert(response.message);
                  }
@@ -462,5 +463,90 @@ uri="http://sargue.net/jsptags/time" %>
              }
          });
      });
+
+     // WebSocket Connection
+      var stompClient = null;
+      function connect() {
+          var socket = new SockJS('${pageContext.request.contextPath}/ws');
+          stompClient = Stomp.over(socket);
+          // stompClient.debug = null; // Uncomment to disable debug logs
+          stompClient.connect({}, function(frame) {
+              console.log('Connected: ' + frame);
+              stompClient.subscribe('/topic/sessions/' + sessionId + '/attendance', function(message) {
+                  var update = JSON.parse(message.body);
+                  handleAttendanceUpdate(update);
+              });
+          }, function(error) {
+             console.error('WebSocket Error', error);
+             setTimeout(connect, 5000);
+          });
+      }
+
+      function handleAttendanceUpdate(update) {
+          // 1. Update Badge Count & Chart
+          loadSessionStats();
+
+          // 2. Update Table Row
+          var tr = $('#tr-' + update.userId);
+          if(tr.length > 0) {
+              // Update time (2nd column)
+              if(update.checkinTime) {
+                  var date = new Date(update.checkinTime);
+                   var timeStr = date.getHours().toString().padStart(2, '0') + ':' + date.getMinutes().toString().padStart(2, '0') + ' ' + 
+                                 date.getDate().toString().padStart(2, '0') + '/' + (date.getMonth()+1).toString().padStart(2, '0') + '/' + date.getFullYear();
+                  tr.find('td:nth-child(2)').text(timeStr);
+              } else {
+                  tr.find('td:nth-child(2)').html('<span class="text-muted">--</span>');
+              }
+              
+              // Update Device (3rd column)
+               if(update.deviceInfo) {
+                    tr.find('td:nth-child(3)').html('<small class="text-muted" title="' + update.deviceInfo + '">BROWSER</small>'); // Simplified
+               }
+
+               // Update Status Button (4th column)
+               var btn = $('.status-btn-' + update.userId);
+                if(btn.length > 0) {
+                      btn.text(update.status);
+                      btn.removeClass('btn-success btn-danger btn-secondary btn-warning text-dark');
+                      if(update.status === 'PRESENT') btn.addClass('btn-success');
+                      else if(update.status === 'LATE') btn.addClass('btn-warning text-dark');
+                      else if(update.status === 'ABSENT') btn.addClass('btn-danger');
+                }
+          }
+          
+          // Toast Notification
+          var toastEl = document.getElementById('globalToast');
+          var toastBody = document.getElementById('globalToastMessage');
+          if(toastEl && toastBody) {
+              toastBody.innerText = "SV " + update.username + " vừa điểm danh (" + update.status + ")";
+              var toast = new bootstrap.Toast(toastEl);
+              toast.show();
+          }
+      }
+
+      function loadSessionStats() {
+          $.ajax({
+            url: '${pageContext.request.contextPath}/attend/sessions/' + sessionId + '/stats',
+            type: 'GET',
+            success: function(data) {
+                // Update Chart
+                if(window.mySessionChart) {
+                    window.mySessionChart.data.datasets[0].data = [data.presentCount, data.lateCount, data.absentCount];
+                    window.mySessionChart.update();
+                }
+                
+                // Update badge count
+                 var badge = $('.card-header .badge.bg-info');
+                 if(badge.length > 0) {
+                     var currentCount = data.presentCount + data.lateCount;
+                     badge.text(currentCount + ' / ' + data.totalStudents + ' có mặt');
+                 }
+            }
+          });
+      }
+      
+      // Start Connection
+      connect();
  });
  </script>
