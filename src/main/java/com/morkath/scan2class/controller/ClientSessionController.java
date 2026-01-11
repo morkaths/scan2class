@@ -152,6 +152,7 @@ public class ClientSessionController extends BaseController {
 
         model.addAttribute("classroom", classroom);
         model.addAttribute("session", session);
+        model.addAttribute("isOwner", true);
 
         AssetDto assets = new AssetDto("Chi tiết phiên");
         assets.addStylesheets("/assets/compiled/css/table-datatable.css");

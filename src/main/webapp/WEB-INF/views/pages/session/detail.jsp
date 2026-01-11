@@ -216,10 +216,6 @@ uri="http://sargue.net/jsptags/time" %>
                         <c:choose>
                           <c:when test="${not empty record}">
                             <!-- Check if current user is owner (Teacher) -->
-                            <c:set
-                              var="isOwner"
-                              value="${classroom.owner.username == pageContext.request.userPrincipal.name}"
-                            />
 
                             <c:choose>
                               <c:when test="${isOwner}">
@@ -296,10 +292,6 @@ uri="http://sargue.net/jsptags/time" %>
                           </c:when>
                           <c:otherwise>
                              <!-- No Record - Allow Create if Owner -->
-                            <c:set
-                              var="isOwner"
-                              value="${classroom.owner.username == pageContext.request.userPrincipal.name}"
-                            />
                              <c:choose>
                                <c:when test="${isOwner}">
                                  <div class="dropdown" style="position: static;">

@@ -7,7 +7,7 @@ uri="http://java.sun.com/jsp/jstl/core"%>
     <h2 class="mb-0">Thống kê Điểm danh</h2>
     <div>
       <a
-        href="<c:url value='/classrooms/${classroomId}/detail'/>"
+        href="javascript:history.back()"
         class="btn btn-outline-secondary me-2"
       >
         <i class="bi bi-arrow-left"></i> Quay lại

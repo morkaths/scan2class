@@ -14,6 +14,8 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import java.util.Map;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 
 import com.morkath.scan2class.core.BaseController;
@@ -150,10 +152,12 @@ public class AttendanceController extends BaseController {
     public ResponseEntity<byte[]> exportStats(@PathVariable("classroomId") Long classroomId) {
         try {
             byte[] fileContent = attendanceService.exportClassroomStatsToExcel(classroomId);
+            String date = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmm"));
+            String filename = String.format("Report_%s.xlsx", date);
 
             return ResponseEntity.ok()
                     .header(HttpHeaders.CONTENT_DISPOSITION,
-                            "attachment; filename=\"report_" + classroomId + ".xlsx\"")
+                            "attachment; filename=\"" + filename + ".xlsx\"")
                     .contentType(MediaType
                             .parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"))
                     .body(fileContent);
