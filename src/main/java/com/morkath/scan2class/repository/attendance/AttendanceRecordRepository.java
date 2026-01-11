@@ -24,15 +24,6 @@ public interface AttendanceRecordRepository extends JpaRepository<AttendanceReco
     // Analytics
     long countBySessionIdAndStatus(Long sessionId, String status);
 
-    @Query(value = "SELECT u.uid, u.username, u.fullname, " +
-            "COALESCE(SUM(CASE WHEN ar.status = 'PRESENT' THEN 1 ELSE 0 END), 0) as present_count, " +
-            "COALESCE(SUM(CASE WHEN ar.status = 'LATE' THEN 1 ELSE 0 END), 0) as late_count, " +
-            "COALESCE(SUM(CASE WHEN ar.status = 'ABSENT' THEN 1 ELSE 0 END), 0) as absent_count " +
-            "FROM class_participants cp " +
-            "JOIN users u ON cp.user_id = u.uid " +
-            "LEFT JOIN attendance_records ar ON ar.user_id = u.uid " +
-            "AND ar.session_id IN (SELECT id FROM sessions WHERE class_id = :classroomId) " +
-            "WHERE cp.class_id = :classroomId " +
-            "GROUP BY u.uid, u.username, u.fullname", nativeQuery = true)
-    List<Object[]> getStudentStatsByClassroom(@Param("classroomId") Long classroomId);
+    @Query("SELECT ar FROM AttendanceRecordEntity ar WHERE ar.session.classroom.id = :classroomId")
+    List<AttendanceRecordEntity> findBySessionClassroomId(@Param("classroomId") Long classroomId);
 }

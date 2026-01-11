@@ -1,9 +1,12 @@
 package com.morkath.scan2class.service.impl;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.Cell;
@@ -25,8 +28,10 @@ import com.morkath.scan2class.dto.StudentStatDTO;
 import com.morkath.scan2class.entity.attendance.AttendanceRecordEntity;
 import com.morkath.scan2class.entity.attendance.SessionEntity;
 import com.morkath.scan2class.entity.auth.UserEntity;
+import com.morkath.scan2class.entity.classroom.ClassParticipantEntity;
 import com.morkath.scan2class.repository.attendance.AttendanceRecordRepository;
 import com.morkath.scan2class.repository.attendance.SessionRepository;
+import com.morkath.scan2class.repository.classroom.ClassParticipantRepository;
 import com.morkath.scan2class.service.AttendanceService;
 
 @Service
@@ -37,6 +42,7 @@ public class AttendanceServiceImpl extends BaseServiceImpl<AttendanceRecordEntit
     private final SessionRepository sessionRepository;
     private final AttendanceRecordRepository attendanceRecordRepository;
     private final com.morkath.scan2class.repository.auth.UserRepository userRepository;
+    private final ClassParticipantRepository classParticipantRepository;
 
     @Value("${demo.mode.skip-location:false}")
     private boolean skipLocationCheck;
@@ -44,11 +50,13 @@ public class AttendanceServiceImpl extends BaseServiceImpl<AttendanceRecordEntit
     @Autowired
     public AttendanceServiceImpl(AttendanceRecordRepository attendanceRecordRepository,
             SessionRepository sessionRepository,
-            com.morkath.scan2class.repository.auth.UserRepository userRepository) {
+            com.morkath.scan2class.repository.auth.UserRepository userRepository,
+            ClassParticipantRepository classParticipantRepository) {
         super(attendanceRecordRepository);
         this.attendanceRecordRepository = attendanceRecordRepository;
         this.sessionRepository = sessionRepository;
         this.userRepository = userRepository;
+        this.classParticipantRepository = classParticipantRepository;
     }
 
     @Override
@@ -147,28 +155,41 @@ public class AttendanceServiceImpl extends BaseServiceImpl<AttendanceRecordEntit
         ClassroomStatsDTO stats = new ClassroomStatsDTO();
         stats.setClassroomId(classroomId);
 
-        List<Object[]> rawStats = attendanceRecordRepository.getStudentStatsByClassroom(classroomId);
-        List<StudentStatDTO> studentStats = new java.util.ArrayList<>();
-
+        // 1. Get total sessions count
         int totalSessions = sessionRepository.countByClassroomId(classroomId);
         stats.setTotalSessions(totalSessions);
 
-        for (Object[] row : rawStats) {
-            StudentStatDTO dto = new StudentStatDTO();
-            dto.setUserId(safeLong(row[0]));
-            dto.setUsername((String) row[1]);
-            dto.setFullName((String) row[2]);
+        // 2. Get all participants
+        List<ClassParticipantEntity> participants = classParticipantRepository.findByIdClassId(classroomId);
 
-            // Safe casting for counts
-            int present = safeInt(row[3]);
-            int late = safeInt(row[4]);
+        // 3. Get all attendance records for this class
+        List<AttendanceRecordEntity> records = attendanceRecordRepository.findBySessionClassroomId(classroomId);
+
+        // Group records by User ID
+        Map<Long, List<AttendanceRecordEntity>> recordsByUser = records.stream()
+                .collect(Collectors.groupingBy(r -> r.getUser().getId()));
+
+        List<StudentStatDTO> studentStats = new ArrayList<>();
+
+        for (ClassParticipantEntity participant : participants) {
+            UserEntity user = participant.getUser();
+            StudentStatDTO dto = new StudentStatDTO();
+            dto.setUserId(user.getId());
+            dto.setUsername(user.getUsername());
+            dto.setFullName(user.getFullname());
+
+            List<AttendanceRecordEntity> userRecords = recordsByUser.getOrDefault(user.getId(),
+                    Collections.emptyList());
+
+            int present = (int) userRecords.stream().filter(r -> "PRESENT".equals(r.getStatus())).count();
+            int late = (int) userRecords.stream().filter(r -> "LATE".equals(r.getStatus())).count();
 
             dto.setPresentCount(present);
             dto.setLateCount(late);
 
             int attended = present + late;
-            int calculatedAbsent = totalSessions - attended;
-            dto.setAbsentCount(Math.max(0, calculatedAbsent));
+            int absent = Math.max(0, totalSessions - attended);
+            dto.setAbsentCount(absent);
 
             dto.setTotalSessions(totalSessions);
 
@@ -194,25 +215,6 @@ public class AttendanceServiceImpl extends BaseServiceImpl<AttendanceRecordEntit
         stats.setOverallDidAttend(overall);
 
         return stats;
-    }
-
-    // Helper methods for safe casting from Native Query
-    private Long safeLong(Object o) {
-        if (o == null)
-            return null;
-        if (o instanceof Number) {
-            return ((Number) o).longValue();
-        }
-        return null;
-    }
-
-    private int safeInt(Object o) {
-        if (o == null)
-            return 0;
-        if (o instanceof Number) {
-            return ((Number) o).intValue();
-        }
-        return 0;
     }
 
     @Override

@@ -14,6 +14,8 @@ public interface SessionRepository extends JpaRepository<SessionEntity, Long> {
 
     int countByClassroomId(Long classroomId);
 
+    List<SessionEntity> findByClassroomId(Long classroomId);
+
     List<SessionEntity> findByActiveTrueAndEndTimeBefore(LocalDateTime now);
 
     @org.springframework.data.jpa.repository.Modifying
