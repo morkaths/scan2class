@@ -26,4 +26,8 @@ public interface AttendanceRecordRepository extends JpaRepository<AttendanceReco
 
     @Query("SELECT ar FROM AttendanceRecordEntity ar WHERE ar.session.classroom.id = :classroomId")
     List<AttendanceRecordEntity> findBySessionClassroomId(@Param("classroomId") Long classroomId);
+
+    @Query("SELECT COUNT(ar) FROM AttendanceRecordEntity ar WHERE ar.session.classroom.id = :classroomId AND ar.user.id = :userId AND ar.status = :status")
+    long countByClassroomIdAndUserIdAndStatus(@Param("classroomId") Long classroomId, @Param("userId") Long userId,
+            @Param("status") String status);
 }

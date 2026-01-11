@@ -45,6 +45,8 @@
 		        padding-top: 70px !important;
 		    }
 		}
+
+
 	</style>
 </head>
 <body>
@@ -80,7 +82,7 @@
 	</c:if>
 
 	<!-- Global Toast Container -->
-	<div class="position-fixed bottom-0 end-0 p-3" style="z-index: 1111">
+	<div class="position-fixed top-0 end-0 p-3" style="z-index: 1111">
 	  <div id="globalToast" class="toast hide" role="alert" aria-live="assertive" aria-atomic="true">
 	    <div class="toast-header">
 	      <i class="bi bi-info-circle-fill me-2 text-primary"></i>
@@ -94,26 +96,7 @@
 	  </div>
 	</div>
 
-	<script>
-	    document.addEventListener("DOMContentLoaded", function() {
-	        var message = "${message}";
-	        var errorMessage = "${errorMessage}";
-	
-	        if (message && message.trim() !== "") {
-	            var toastEl = document.getElementById('globalToast');
-	            var toastBody = document.getElementById('globalToastMessage');
-	            toastBody.innerText = message;
-	            var toast = new bootstrap.Toast(toastEl);
-	            toast.show();
-	        } else if (errorMessage && errorMessage.trim() !== "") {
-	             var toastEl = document.getElementById('globalToast');
-	             var toastBody = document.getElementById('globalToastMessage');
-	             toastBody.innerText = errorMessage;
-	             // Optional: Change icon or style for error if needed
-	             var toast = new bootstrap.Toast(toastEl);
-	             toast.show();
-	        }
-	    });
-	</script>
+    <!-- Include Chat Widget Fragment -->
+    <jsp:include page="/WEB-INF/views/fragments/chat-widget.jsp" />
 </body>
 </html>

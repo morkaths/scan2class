@@ -19,7 +19,7 @@
         </Logger>
 
         <!-- Application Loggers -->
-        <Logger name="com.morkath.scan2class" level="debug" additivity="false">
+        <Logger name="com.morkath.scan2class" level="info" additivity="false">
             <AppenderRef ref="Console"/>
         </Logger>
         

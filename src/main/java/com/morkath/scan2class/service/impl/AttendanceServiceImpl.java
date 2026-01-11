@@ -310,4 +310,32 @@ public class AttendanceServiceImpl extends BaseServiceImpl<AttendanceRecordEntit
             return out.toByteArray();
         }
     }
+
+    @Override
+    public StudentStatDTO getStudentClassStats(Long classroomId, Long userId) {
+        int totalSessions = sessionRepository.countByClassroomId(classroomId);
+
+        // Count statuses
+        long present = attendanceRecordRepository.countByClassroomIdAndUserIdAndStatus(classroomId, userId, "PRESENT");
+        long late = attendanceRecordRepository.countByClassroomIdAndUserIdAndStatus(classroomId, userId, "LATE");
+
+        StudentStatDTO dto = new StudentStatDTO();
+        dto.setUserId(userId);
+        dto.setTotalSessions(totalSessions);
+        dto.setPresentCount((int) present);
+        dto.setLateCount((int) late);
+
+        int attended = (int) (present + late);
+        int absent = Math.max(0, totalSessions - attended);
+        dto.setAbsentCount(absent);
+
+        if (totalSessions > 0) {
+            double rate = (double) attended / totalSessions * 100;
+            dto.setAttendanceRate(Math.round(rate * 100.0) / 100.0);
+        } else {
+            dto.setAttendanceRate(100.0);
+        }
+
+        return dto;
+    }
 }

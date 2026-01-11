@@ -21,6 +21,9 @@ public class SessionEntity extends BaseEntity {
 	@Column(name = "name", nullable = false, length = 255)
 	private String name;
 
+	@Column(name = "room", length = 50)
+	private String room;
+
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "class_id", nullable = false)
 	private ClassroomEntity classroom;
@@ -102,9 +105,10 @@ public class SessionEntity extends BaseEntity {
 		double distance = calculateDistance(userLat, userLong);
 		return distance <= this.radius;
 	}
-	
+
 	/**
 	 * Lấy bản đồ ánh xạ giữa User ID và AttendanceRecordEntity.
+	 * 
 	 * @return Map<User ID, AttendanceRecordEntity>
 	 */
 	@Transient
@@ -147,6 +151,14 @@ public class SessionEntity extends BaseEntity {
 
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	public String getRoom() {
+		return room;
+	}
+
+	public void setRoom(String room) {
+		this.room = room;
 	}
 
 	public ClassroomEntity getClassroom() {

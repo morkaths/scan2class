@@ -76,7 +76,7 @@ public class UserServiceImpl extends BaseServiceImpl<UserEntity, Long> implement
 		}
 
 		System.err.println("DEBUG: Lookup Username: " + username);
-		UserEntity user = userRepository.findByUsername(username);
+		UserEntity user = userRepository.findByUsernameOrEmail(username);
 		System.err.println("DEBUG: Found User: " + (user != null ? user.getId() : "NULL"));
 
 		return user;

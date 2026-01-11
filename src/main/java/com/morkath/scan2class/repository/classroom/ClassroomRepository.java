@@ -12,8 +12,13 @@ import com.morkath.scan2class.entity.auth.UserEntity;
 @Repository
 public interface ClassroomRepository extends JpaRepository<ClassroomEntity, Long> {
     Optional<ClassroomEntity> findByCode(String code);
+
     boolean existsByCode(String code);
-    List<ClassroomEntity> findByOwner(UserEntity owner);
+
+    @org.springframework.data.jpa.repository.Query("SELECT DISTINCT c FROM ClassroomEntity c WHERE c.owner = :owner")
+    List<ClassroomEntity> findByOwner(@org.springframework.data.repository.query.Param("owner") UserEntity owner);
+
     List<ClassroomEntity> findByOwnerId(Long ownerId);
+
     List<ClassroomEntity> findByStatus(int status);
 }

@@ -40,6 +40,17 @@
 
           <div class="mb-3">
             <label class="text-muted small text-uppercase fw-bold"
+              >Phòng học</label>
+            <div class="fw-bold fs-5 mb-3">
+              <c:choose>
+                <c:when test="${not empty session.room}"> ${session.room} </c:when>
+                <c:otherwise>
+                  ${classroom.room} <span class="text-muted small fw-normal">(Mặc định)</span>
+                </c:otherwise>
+              </c:choose>
+            </div>
+
+            <label class="text-muted small text-uppercase fw-bold"
               >Trạng thái</label
             >
             <div>

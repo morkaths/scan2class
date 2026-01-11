@@ -87,6 +87,7 @@ public class ClientSessionController extends BaseController {
         session.setRadius(dto.getRadius());
         session.setLatitude(dto.getLatitude());
         session.setLongitude(dto.getLongitude());
+        session.setRoom(dto.getRoom());
 
         sessionService.save(session);
         redirectAttributes.addFlashAttribute("message", "Tạo phiên điểm danh thành công!");

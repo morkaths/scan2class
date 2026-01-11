@@ -14,9 +14,12 @@ public interface SessionRepository extends JpaRepository<SessionEntity, Long> {
 
     int countByClassroomId(Long classroomId);
 
-    List<SessionEntity> findByClassroomId(Long classroomId);
+    List<SessionEntity> findByClassroomIdOrderByStartTimeDesc(Long classroomId);
 
     List<SessionEntity> findByActiveTrueAndEndTimeBefore(LocalDateTime now);
+
+    // Last session
+    SessionEntity findFirstByClassroomIdAndStartTimeBeforeOrderByStartTimeDesc(Long classroomId, LocalDateTime now);
 
     @org.springframework.data.jpa.repository.Modifying
     @org.springframework.data.jpa.repository.Query("UPDATE SessionEntity s SET s.active = false WHERE s.active = true AND s.endTime < :now")

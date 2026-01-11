@@ -51,6 +51,13 @@
                                         <form:errors path="name" cssClass="text-danger small" />
                                     </div>
 
+                                    <div class="mb-3">
+                                        <label for="room" class="form-label fw-bold">Phòng học (Tùy chọn)</label>
+                                        <form:input path="room" cssClass="form-control" id="room"
+                                            placeholder="VD: P.101 (Để trống nếu dùng phòng mặc định)" />
+                                        <form:errors path="room" cssClass="text-danger small" />
+                                    </div>
+
                                     <div class="row">
                                         <div class="col-md-6 mb-3">
                                             <label for="duration" class="form-label fw-bold">

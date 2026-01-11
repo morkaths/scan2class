@@ -3,6 +3,7 @@ package com.morkath.scan2class.service;
 import com.morkath.scan2class.core.BaseService;
 import com.morkath.scan2class.dto.ClassroomStatsDTO;
 import com.morkath.scan2class.dto.SessionStatsDTO;
+import com.morkath.scan2class.dto.StudentStatDTO;
 import com.morkath.scan2class.entity.attendance.AttendanceRecordEntity;
 import com.morkath.scan2class.entity.auth.UserEntity;
 
@@ -20,4 +21,5 @@ public interface AttendanceService extends BaseService<AttendanceRecordEntity, L
 
         byte[] exportClassroomStatsToExcel(Long classroomId) throws Exception;
 
+        StudentStatDTO getStudentClassStats(Long classroomId, Long userId);
 }

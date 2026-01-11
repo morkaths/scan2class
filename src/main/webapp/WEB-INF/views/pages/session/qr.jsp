@@ -7,7 +7,14 @@
                 <!-- Header Section -->
                 <div class="mb-5">
                     <h3 class="display-6 fw-bold mb-2">${classroom.name}</h3>
-                    <h4 class="text-muted mb-3">${session.name}</h4>
+                    <h4 class="text-muted mb-2">${session.name}</h4>
+                    <c:if test="${not empty session.room}">
+                        <h5 class="text-primary mb-3"><i class="bi bi-geo-alt-fill"></i> ${session.room}</h5>
+                    </c:if>
+                    <c:if test="${empty session.room and not empty classroom.room}">
+                        <h5 class="text-primary mb-3"><i class="bi bi-geo-alt-fill"></i> ${classroom.room}</h5>
+                    </c:if>
+                    
                     <span class="badge bg-success fs-6 px-3 py-2 rounded-pill">
                         <i class="bi bi-broadcast me-1"></i> Đang diễn ra
                     </span>

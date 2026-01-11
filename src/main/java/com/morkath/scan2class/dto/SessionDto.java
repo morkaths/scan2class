@@ -2,15 +2,16 @@ package com.morkath.scan2class.dto;
 
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
-import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 public class SessionDto {
 
-    @NotBlank(message = "Session name is required")
     @Size(max = 255, message = "Name must be less than 255 characters")
     private String name;
+
+    @Size(max = 50, message = "Room must be less than 50 characters")
+    private String room;
 
     @NotNull(message = "Duration is required")
     @Min(value = 1, message = "Duration must be at least 1 minute")
@@ -31,6 +32,14 @@ public class SessionDto {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getRoom() {
+        return room;
+    }
+
+    public void setRoom(String room) {
+        this.room = room;
     }
 
     public Integer getDuration() {

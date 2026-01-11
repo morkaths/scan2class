@@ -33,6 +33,7 @@ public class ClassroomEntity extends BaseEntity {
 	private Set<ClassParticipantEntity> participants = new HashSet<>();
 
 	@OneToMany(mappedBy = "classroom", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@OrderBy("startTime DESC")
 	private Set<SessionEntity> sessions = new HashSet<>();
 
 	public ClassroomEntity() {
