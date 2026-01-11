@@ -11,9 +11,42 @@ Dự án được xây dựng dựa trên mô hình **MVC (Model-View-Controller
 
 ### Mô hình MVC
 
-- **Model**: Các Entity JPA (`UserEntity`, `SessionEntity`, v.v.) ánh xạ trực tiếp với bảng trong MySQL. DTOs (`ClassroomStatsDTO`) được sử dụng để chuyển dữ liệu giữa các lớp.
-- **View**: Sử dụng **JSP (JavaServer Pages)** kết hợp thư viện **JSTL** để render giao diện phía server. Frontend sử dụng **Bootstrap 5** và **jQuery**.
-- **Controller**: Các lớp `@Controller` của Spring MVC xử lý Request, gọi Service và trả về View name.
+- **Model**: Các Entity JPA (`UserEntity`, `SessionEntity`, v.v.) ánh xạ trực tiếp với bảng trong MySQL sử dụng **Hibernate 5.6**. DTOs (`ClassroomStatsDTO`) được sử dụng để chuyển dữ liệu giữa các lớp.
+- **View**: Sử dụng **JSP 2.3** kết hợp thư viện **JSTL 1.2** để render giao diện phía server. Frontend sử dụng **Bootstrap 5.3**, **jQuery 3.6**, và **Chart.js 4.x**.
+- **Controller**: Các lớp `@Controller` và `@RestController` của Spring MVC xử lý Request, gọi Service và trả về View hoặc JSON.
+
+---
+
+## 1.1. Danh mục Công nghệ (Technology Stack)
+
+Hệ thống được xây dựng trên nền tảng Java hiện đại với các công nghệ sau:
+
+### Tầng Backend
+
+- **Ngôn ngữ:** Java 17
+- **Framework chính:** Spring Framework 5.3.30 (Core, MVC, ORM, Context)
+- **Bảo mật:** Spring Security 5.8.5 (Form Login, Google OAuth2, JWT)
+- **Dữ liệu:** Spring Data JPA 2.7.18
+- **ORM:** Hibernate 5.6.15.Final
+- **Kết nối DB:** HikariCP 5.1.0
+- **Giao tiếp:** WebSockets (Spring Messaging + STOMP / SockJS)
+
+### Tầng Frontend
+
+- **Template Engine:** JSP 2.3 / JSTL 1.2
+- **Styling:** Bootstrap 5.3
+- **Scripting:** jQuery 3.6
+- **Data Visualization:** Chart.js
+- **QR Generation:** qrcode.js (Client-side) & ZXing 3.5.2 (Server-side)
+
+### Cơ sở dữ liệu & Tích hợp
+
+- **Database:** MySQL 8.0
+- **AI Integration:** Google Gemini API (via Google GenAI SDK 1.0.0)
+- **Reporting:** Apache POI 5.2.3 (Xuất dữ liệu Excel)
+- **JSON Processing:** Jackson 2.15.2
+- **Build Tool:** Maven 3.x
+- **Containerization:** Docker & Docker Compose
 
 ### Cấu hình Hệ thống (Pure Java Configuration)
 
@@ -54,17 +87,18 @@ public class WebInitializer extends AbstractAnnotationConfigDispatcherServletIni
 
 ## 2. Giải pháp Kỹ thuật Cốt lõi (Core Technical Solutions)
 
-### 2.1. Cơ chế Mã QR Động (Dynamic QR Mechanism)
+### 2.1. Cơ chế Mã QR Duy nhất theo Phiên (Session-Bound QR Mechanism)
 
-Mục tiêu là chống việc sinh viên chụp ảnh mã QR và gửi cho bạn bè điểm danh hộ.
+Mặc dù hệ thống được thiết kế để hỗ trợ xoay vòng mã QR, phiên bản hiện tại sử dụng cơ chế Token duy nhất cho mỗi phiên điểm danh để đảm bảo tính ổn định và hiệu năng.
 
 - **Server-Side**:
-  - Mỗi `SessionEntity` có một trường `token` (String).
-  - Khi tạo phiên, Token được sinh ngẫu nhiên dùng `java.util.UUID`.
-  - Có API để làm mới token định kỳ (ví dụ: mỗi 15-30 giây), cập nhật lại vào DB.
+  - Mỗi `SessionEntity` được gán một `token` duy nhất (UUID) ngay khi khởi tạo.
+  - Token này có hiệu lực trong suốt thời gian diễn ra buổi học (từ `startTime` đến `endTime`).
+  - Hệ thống kiểm tra tính hợp lệ của Token và trạng thái `active` của phiên trước khi ghi nhận điểm danh.
 - **Client-Side (Giảng viên)**:
-  - Sử dụng **JavaScript (`setInterval`)** để gọi API lấy token mới.
-  - Sử dụng thư viện **`qrcode.js`** để vẽ lại mã QR với nội dung: `APP_URL/attend?token={DYNAMIC_TOKEN}`.
+  - Trang hiển thị mã QR dựa trên Token của phiên hiện tại: `APP_URL/attend?token={SESSION_TOKEN}`.
+  - Sử dụng thư viện **`qrcode.js`** để render mã trên trình duyệt.
+  - Kết hợp **WebSocket (STOMP)** để cập nhật danh sách sinh viên điểm danh thành công lên màn hình giảng viên ngay lập tức mà không cần reload.
 
 ### 2.2. Xác thực Vị trí (Geolocation Validation)
 
@@ -183,17 +217,23 @@ GROUP BY u.uid
 
 Ngoài các giải pháp kỹ thuật cốt lõi, hệ thống còn sở hữu những tính năng thực tiễn, giải quyết triệt để các bài toán của điểm danh truyền thống:
 
-### 🌟 Hệ thống Chống gian lận 3 Lớp (Triple-Layer Anti-Cheat)
+### 🌟 Hệ thống Chống gian lận & Xác thực (Anti-Cheat & Validation)
 
-1.  **Mã QR Động**: Mã làm mới mỗi 15-30 giây, khiến việc chụp ảnh màn hình trở nên vô dụng.
-2.  **Geofencing (Hàng rào ảo)**: Kiểm tra tọa độ GPS của người học so với vị trí giảng viên. Nếu khoảng cách > 50-100m, hệ thống tự động từ chối.
-3.  **Device Fingerprint**: (Đang phát triển) Ghi nhận thông tin thiết bị để cảnh báo khi 1 máy điểm danh cho nhiều người.
+1.  **Mã QR Bảo mật theo Phiên**: Mã QR được mã hóa bằng Token UUID duy nhất cho từng buổi học, kết hợp với thời hạn hiệu lực (expiry), ngăn chặn việc truy cập trái phép sau khi buổi học kết thúc.
+2.  **Geofencing (Hàng rào ảo)**: Kiểm tra tọa độ GPS của người học so với vị trí giảng viên dựa trên thuật toán Haversine. Hệ thống tự động từ chối nếu sinh viên nằm ngoài bán kính cho phép.
+3.  **Device Fingerprint**: Ghi nhận thông tin thiết bị (`device_uid` & User-Agent) để hỗ trợ hậu kiểm và phát hiện các trường hợp một thiết bị điểm danh cho nhiều tài khoản khác nhau.
+
+### 🤖 Trợ lý ảo AI (S2C Bot - AI Assistant)
+
+1.  **Tích hợp Google Gemini**: Tích hợp mô hình ngôn ngữ lớn (LLM) để tương tác và hỗ trợ người dùng bằng ngôn ngữ tự nhiên (Tiếng Việt).
+2.  **Cơ chế RAG (Retrieval-Augmented Generation)**: Bot được cung cấp ngữ cảnh thực tế của người dùng (danh sách lớp học, tình hình điểm danh cá nhân) để đưa ra các câu trả lời chính xác và cá nhân hóa.
+3.  **Tư vấn Quy định**: Hỗ trợ giải đáp các quy định chuyên cần (ví dụ: cấm thi khi vắng quá 20%) và lộ trình học tập dựa trên dữ liệu thời gian thực.
 
 ### 📊 Báo cáo & Thống kê Thông minh
 
-- **Real-time Dashboard**: Giảng viên thấy sỉ số lớp nhảy số ngay lập tức khi SV quét mã.
-- **Biểu đồ Trực quan**: Tích hợp **Chart.js** để hiển thị Tỷ lệ Chuyên cần (Pie Chart) và Top Vắng (Bar Chart).
-- **Xuất Excel chuẩn**: Tính năng xuất báo cáo ra file Excel (.xlsx) với định dạng đẹp, sẵn sàng để nộp lên phòng đào tạo.
+- **Real-time Dashboard (WebSockets)**: Giảng viên theo dõi sỉ số lớp cập nhật tức thì qua kết nối **STOMP/SockJS**. Biểu đồ và danh sách tự động nhảy số khi có SV quét mã thành công.
+- **Biểu đồ Trực quan**: Tích hợp **Chart.js** hiển thị Tỷ lệ Chuyên cần (Pie Chart) và Top sinh viên vắng nhiều (Bar Chart) giúp GV có cái nhìn tổng quan về lớp học.
+- **Xuất Excel Chuẩn**: Tính năng xuất báo cáo chuyên cần ra file Excel (`.xlsx`) với định dạng chuyên nghiệp thông qua **Apache POI**, hỗ trợ công tác lưu trữ và báo cáo.
 
 ### 👥 Quản lý Lớp học Linh hoạt
 
