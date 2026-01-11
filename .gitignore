@@ -14,3 +14,4 @@
 # Config
 application-local.properties
 .env
+.env.local
